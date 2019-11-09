@@ -1,0 +1,41 @@
+
+
+
+/* Buttons */
+
+.btn {
+	text-transform: uppercase;
+	border-radius: 5px;
+	border: 0;
+	font-family: helvetica, arial;
+	text-align: center;
+	font-size: 15px;
+	padding: 14px 20px;
+}
+
+.btn-primary {
+	background: #4ea4f6;
+	color: #fff;
+}
+
+.btn-block {
+	display: block;
+}
+
+/* Buttons - Ripple effect */
+.btn {
+  background-position: center;
+  transition: background 0.8s;
+}
+.btn:hover {
+  background: #4ea4f6 radial-gradient(circle, transparent 1%, #4ea4f6 1%) center/15000%;
+}
+.btn:active {
+  background-color: #6eb9f7;
+  background-size: 100%;
+  transition: background 0s;
+}
+
+
+/* Input elements */
+
