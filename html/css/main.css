@@ -1,4 +1,7 @@
-
+html, body {
+	padding: 0;
+	margin: 0;
+}
 
 
 /* Buttons */
@@ -11,6 +14,11 @@
 	text-align: center;
 	font-size: 15px;
 	padding: 14px 20px;
+
+	position:relative;
+	overflow:hidden;
+	transition: all 0.2s ease;
+	z-index:0;
 }
 
 .btn-primary {
@@ -22,18 +30,24 @@
 	display: block;
 }
 
-/* Buttons - Ripple effect */
-.btn {
-  background-position: center;
-  transition: background 0.8s;
+
+
+/* Ripple effect */
+
+.ink {
+	display: block;
+	position: absolute;
+	background:rgba(255, 255, 255, 0.3);
+	border-radius: 100%;
+	transform:scale(0);
 }
-.btn:hover {
-  background: #4ea4f6 radial-gradient(circle, transparent 1%, #4ea4f6 1%) center/15000%;
+
+.animate {
+  animation:ripple 0.65s linear;
 }
-.btn:active {
-  background-color: #6eb9f7;
-  background-size: 100%;
-  transition: background 0s;
+
+@keyframes ripple {
+    100% {opacity: 0; transform: scale(2.5);}
 }
 
 
