@@ -210,3 +210,47 @@ select {
 	height: 19px;
 	background-size: 100%;
 }
+
+.link-icon.eye {
+	background: url('../img/icons/eye1_3x.png') no-repeat;
+	width: 19px;
+	height: 15px;
+	background-size: 100%;
+}
+
+
+.link-icon.eye.close {
+	background: url('../img/icons/eye2_3x.png') no-repeat;
+	width: 19px;
+	height: 15px;
+	background-size: 100%;
+}
+
+
+
+
+
+/* Password form */
+
+.auth-password-form {
+	background: url('../img/monkey-head-password.png') no-repeat;
+	background-position: center 0;
+	background-size: 122px;
+	padding-top: 150px;
+	margin: 100px auto 0;
+	width: 360px;
+	text-align: center;
+}
+
+.auth-password-form.show-password {
+	background-image: url('../img/monkey-head-password-show.png');
+}
+
+.auth-code-form.concerned {
+	background-image: url('../img/monkey-head-concerned.png');
+}
+
+
+.show-password-button {
+	margin-left: -30px;
+}
