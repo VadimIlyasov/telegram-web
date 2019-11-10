@@ -6,25 +6,61 @@
       <meta name="viewport" content="width=device-width">
       <title>Webogram</title>
       <meta name="description" content="Telegram for web">
+      
   </head>
-
-  <body class="login-page">
+  <body class="webogram login-page">
     <div class="login-form">
       <h1>Sign in to Telegram</h1>
       <p>Please confirm your country and enter your phone number.</p>
 
-      <select placeholder="country">
-        <option value="">Ukraine</option>
-      </select>
+      <div class="md-input-group">
+        <label class="md-input-label">Country</label>
+        <select placeholder="country" id="sign-in-country">
+          <option value="">Country</option>
+          <option value="+380">Ukraine (+380)</option>
+          <option value="+7">Russia (+7)</option>
+          <option value="+1">United States (+1)</option>
+        </select>
+      </div>
 
-      <input type="text" value="" placeholder="Phone number" />
 
-      <label><input type="checkbox" /> Keep me signed in</label>
+      <div class="md-input-group">
+        <label class="md-input-label">Phone number</label>
+        <input type="text" value="" placeholder="" class="text" />
+      </div>
 
-      <button class="btn btn-primary btn-block" style="width: 400px;">Next</button>
+      <br>
+      <div>
+        <label><input type="checkbox" checked="checked" /> Keep me signed in</label>
+      </div>
+      <br>
+      <div>
+        <button class="btn btn-primary btn-block" style="width: 100%;">Next</button>
+      </div>
 
     </div>
 
+
     <script src="js/buttons.js" language="javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+
+    <script>
+      $(document).ready(function() {
+        $('select').select2();
+
+        $('input[type="text"]').on('focus', function() { $(this).parent().addClass('md-input-has-value').addClass('active') });
+        $('input[type="text"]').on('blur', function() { if (!$(this).val()) $(this).parent().removeClass('md-input-has-value'); $(this).parent().removeClass('active'); });
+
+        $('#sign-in-country').change(function() {
+          if ($(this).val()) {
+            $(this).parent().addClass('md-input-has-value');
+          } else {
+            $(this).parent().removeClass('md-input-has-value');
+          }
+        });
+      });
+    </script>
   </body>
 </html>

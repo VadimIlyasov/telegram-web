@@ -19,4 +19,5 @@ for (var i = 0, len = links.length; i < len; i++) {
     inkEl.style.top = (e.offsetY - inkEl.offsetHeight / 2) + 'px';
     inkEl.classList.add('animate');
   }, false);
+
 }

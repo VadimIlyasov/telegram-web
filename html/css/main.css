@@ -3,6 +3,11 @@ html, body {
 	margin: 0;
 }
 
+* {
+	font-family: arial;
+	box-sizing: border-box;
+}
+
 
 /* Buttons */
 
@@ -53,3 +58,110 @@ html, body {
 
 /* Input elements */
 
+
+
+
+/* Login form */
+
+.login-form {
+	background: url('../img/telegram-logo.png') no-repeat;
+	background-position: center 0;
+	background-size: 160px;
+	padding-top: 200px;
+	margin: 100px auto 0;
+	width: 360px;
+	text-align: center;
+}
+
+
+
+/* Input */
+
+input.text {
+	border: 1px solid #dadce0;
+	border-radius: 5px;
+	font-size: 14px;
+    padding: 13px 10px;
+    width: 100%;
+    outline: none;
+    margin: 1px 0;
+}
+
+input.text:focus {
+	border: 2px solid #4ea4f6;
+	margin: 0;
+}
+
+.md-input-group {
+	text-align: left;
+}
+
+.md-input-group .md-input-label {
+    -webkit-transition: all .15s cubic-bezier(.35,0,.15,1);
+    transition: all .15s cubic-bezier(.35,0,.15,1);
+}
+
+.md-input-label {
+    font-weight: 400;
+    color: #999;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    pointer-events: none;
+    -webkit-font-smoothing: antialiased;
+    transform-origin: left center;
+    -webkit-transform-origin: left center;
+    -webkit-transform: translate3d(0,35px,0);
+    transform: translate3d(0,35px,0);
+    
+    text-align: left;
+    margin-left: 8px;
+    line-height: 25px;
+    background: #fff;
+    padding-left: 2px;
+    padding-right: 2px;
+
+}
+
+.md-input-has-value .md-input-label {
+	-webkit-transform:scale(.9);
+	transform:scale(.9);
+	-webkit-transform: translate3d(0,14px,0);
+	transform: translate3d(0,14px,0);
+	font-size: 12px;
+}
+
+
+.md-input-has-value.active .md-input-label {
+	color: #4ea4f6;
+}
+
+
+
+/* Select */
+
+select {
+	width: 100%;
+	text-align: left;
+}
+
+
+.webogram .select2-container--default .select2-selection--single {
+	border: 1px solid #dadce0;
+	border-radius: 5px;
+	text-align: left;
+}
+
+.webogram  .select2-container .select2-selection--single {
+	height: 47px;
+}
+
+.webogram .select2-container--default .select2-selection--single .select2-selection__rendered {
+	line-height: 47px;
+}
+
+.webogram .select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 47px;
+}
