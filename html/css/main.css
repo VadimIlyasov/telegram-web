@@ -92,6 +92,11 @@ input.text:focus {
 	margin: 0;
 }
 
+.invalid input.text {
+	border: 2px solid #e53935;
+	margin: 0;
+}
+
 .md-input-group {
 	text-align: left;
 }
@@ -138,6 +143,10 @@ input.text:focus {
 	color: #4ea4f6;
 }
 
+.md-input-group.invalid .md-input-label {
+	color: #e53935;
+}
+
 
 
 /* Select */
@@ -164,4 +173,40 @@ select {
 
 .webogram .select2-container--default .select2-selection--single .select2-selection__arrow {
 	height: 47px;
+}
+
+
+
+.auth-description {
+	color: #707579;
+}
+
+
+
+/* Code form */
+
+.auth-code-form {
+	background: url('../img/monkey-head.png') no-repeat;
+	background-position: center 0;
+	background-size: 122px;
+	padding-top: 150px;
+	margin: 100px auto 0;
+	width: 360px;
+	text-align: center;
+}
+
+.auth-code-form.concerned {
+	background-image: url('../img/monkey-head-concerned.png');
+}
+
+
+.link-icon {
+	display: inline-block;
+}
+
+.link-icon.pencil {
+	background: url('../img/pencil.png') no-repeat;
+	width: 19px;
+	height: 19px;
+	background-size: 100%;
 }
