@@ -1,0 +1,145 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <link media="all" rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width">
+    <title>Webogram</title>
+    <meta name="description" content="Telegram for web">
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/telegram-api-js/dist/telegramApi.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+    <script type="module" src="js/config.js"></script>
+    <script type="module" src="js/telegram.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/main.js"></script>
+</head>
+<body class="webogram chat-page">
+    <div class="wrapper">
+        <article class="chat-window">
+            <div class="top-bar">
+                <div class="avatar">
+                    <div style="background: tomato; width: 44px; height: 44px; border-radius: 44px;"></div>
+                </div>
+                <div class="info">
+                    <p class="name">Vadimchik</p>
+                    <p class="status">online</p>
+                </div>
+            </div>
+
+            <div class="messages-list">
+
+
+                <div class="message droplet">
+                  <div class="message__text">
+                    <div class="message__text__content">Ti kto?
+                      <div class="message__time">18:12</div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="message my-message droplet">
+                    <div class="message__text">
+                        <div class="message__text__content">
+                            Kak dela?
+                            <div class="message__time">18:12</div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="message my-message droplet">
+                  <div class="message__text">
+                    <div class="message__text__content">Poydem pit' kofe
+                      <div class="message__time">18:12</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="message my-message droplet">
+                    <div class="message__text">
+                        <div class="message__text__content">
+                            ayAYAY
+                            <div class="message__time">18:12</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message droplet">
+                  <div class="message__text">
+                    <div class="message__text__content">
+                        Coffee is a brewed drink prepared from roasted coffee beans, the seeds of berries from certain Coffea species. The genus Coffea is native to tropical Africa and Madagascar, the Comoros, Mauritius, and Réunion in the Indian Ocean.
+                      <div class="message__time">18:12</div>
+                    </div>
+                  </div>
+                </div>
+
+            </div>
+        </article>
+        <aside class="aside contacts">
+            
+            <ul class="contacts-list">
+                <li>
+                    <div class="avatar">
+                        <div style="background: tomato; width: 54px; height: 54px; border-radius: 54px;"></div>
+                    </div>
+                    <div class="info">
+                        <p class="name">Roberto</p>
+                        <p class="last-message">Hi Katana!</p>
+                        <p class="timestamp">21:48</p>
+                        <p class="messages-counter">2</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="avatar">
+                        <div style="background: green; width: 54px; height: 54px; border-radius: 54px;"></div>
+                        <div class="online"></div>
+                    </div>
+                    <div class="info">
+                        <p class="name">Mama</p>
+                        <p class="last-message">GDE TI HODISH IDI DOMOY!</p>
+                        <p class="timestamp">21:23</p>
+                        <p class="messages-counter muted">19</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="avatar">
+                        <div style="background: blue; width: 54px; height: 54px; border-radius: 54px;"></div>
+                    </div>
+                    <div class="info">
+                        <p class="name">Papa</p>
+                        <p class="last-message">OK.</p>
+                        <p class="timestamp">18:01</p>
+                        <p class="messages-counter">1</p>
+                    </div>
+                </li>
+                <li class="selected">
+                    <div class="avatar">
+                        <div style="background: violet; width: 54px; height: 54px; border-radius: 54px;"></div>
+                        <div class="online"></div>
+                    </div>
+                    <div class="info">
+                        <p class="name">Vadimchik</p>
+                        <p class="last-message">Ya bolshe tak ne budu</p>
+                        <p class="timestamp">half a year ago</p>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+        <aside class="aside info">Info</aside>
+    </div>
+
+    <svg height="0" width="0">
+      <defs>
+        <clipPath id="left-droplet">
+          <path d="M 10,0 A 10,10 0 0 1 0,10 H 16 V 0 Z">
+        </clipPath>
+        <clipPath id="right-droplet">
+          <path d="M 6,0 A 10,10 0 0 0 16,10 H 0 V 0 Z">
+        </clipPath>
+      </defs>
+    </svg>
+</body>
+</html>
