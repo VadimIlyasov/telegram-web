@@ -1,4 +1,4 @@
-import config from './config';
+import config from './config.js';
 
 export default class TelegramAPI {
     initialize() {
@@ -11,14 +11,14 @@ export default class TelegramAPI {
             server: {
                 test: [
                     {
-                        id: config.test_dc_id, /* DC ID */
+                        id: config.test_dc_id,
                         host: config.test_host,
                         port: config.test_port
                     }
                 ],
                 production: [
                     {
-                        id: config.prod_dc_id, /* DC ID */
+                        id: config.prod_dc_id,
                         host: config.prod_host,
                         port: config.prod_port
                     }

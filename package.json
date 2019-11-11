@@ -1,0 +1,12 @@
+{
+  "name": "web-telegram",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "jquery": "^3.4.1",
+    "telegram-api-js": "^1.2.9"
+  },
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
