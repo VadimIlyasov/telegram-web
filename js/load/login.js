@@ -34,7 +34,6 @@ $(document).ready(function () {
 
                 // phone_code_hash will need to sign in or sign up
                 window.phone_code_hash = sent_code.phone_code_hash;
-
             });
         });
     });
