@@ -80,6 +80,16 @@
         </article>
         <aside class="aside contacts">
             
+            <div class="contacts-top-bar">
+                <div class="contacts-menu-container">
+                    <a href="#" class="menu"><span class="link-icon menu"></span></a>
+                </div>
+                <div class="search-bar-container">
+                    <input type="text" value="" placeholder="Search">
+                </div>
+                <div class="clear"></div>
+            </div>
+
             <ul class="contacts-list">
                 <li>
                     <div class="avatar">
@@ -128,7 +138,82 @@
                 </li>
             </ul>
         </aside>
-        <aside class="aside info">Info</aside>
+        <aside class="aside info">
+            <div class="info-top-bar">
+                <a href="#"><span class="link-icon close"></span></a>
+                <h3>Info</h3>
+                <a href="#"><span class="link-icon short-menu"></span></a>
+            </div>
+
+            <div class="user-info">
+                <div class="picture">
+                    <div style="background: violet; width: 120px; height: 120px; border-radius: 120px;"></div>
+                </div>
+                <div class="username">Katana Gunok</div>
+                <div class="status">online</div>
+
+                <div class="details">
+                    <div class="details-row">
+                        <div class="details-icon">
+                            <span class="link-icon info"></span>
+                        </div>
+                        <div class="details-data">
+                            <p class="value">25 y.o. traveler</p>
+                            <p class="attribute">Bio</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-icon">
+                            <span class="link-icon username"></span>
+                        </div>
+                        <div class="details-data">
+                            <p class="value">katana</p>
+                            <p class="attribute">Username</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-icon">
+                            <span class="link-icon phone"></span>
+                        </div>
+                        <div class="details-data">
+                            <p class="value">+380976803242</p>
+                            <p class="attribute">Phone</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-icon">
+                            <input type="checkbox">
+                        </div>
+                        <div class="details-data">
+                            <p class="value">Notifications</p>
+                            <p class="attribute">Enabled</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+
+                <div class="clear"></div>
+            </div>
+
+            <div class="tabs">
+                <ul class="tabs-list">
+                    <li><a href="#" class="active" data-tab="media">Media</a></li>
+                    <li><a href="#" data-tab="docs">Docs</a></li>
+                    <li><a href="#" data-tab="links">Links</a></li>
+                    <li><a href="#" data-tab="audio">Audio</a></li>
+                </ul>
+
+                <div class="tabs-container">
+                    <div class="tab" data-name="media">Media</div>
+                    <div class="tab" data-name="docs">Docs</div>
+                    <div class="tab" data-name="links">Links</div>
+                    <div class="tab" data-name="audio">Audio</div>
+                </div>
+            </div>
+        </aside>
     </div>
 
     <svg height="0" width="0">
@@ -141,5 +226,20 @@
         </clipPath>
       </defs>
     </svg>
+
+
+
+    <script>
+        $('.tabs-list a').click(function() {
+            $('.tabs-container > div').hide();
+            $('.tabs-container > div[data-name="' + $(this).data('tab') + '"]').show();
+
+            $('.tabs-list a').removeClass('active');
+            $(this).addClass('active');
+            return false;
+        });
+
+        $('.tabs-list a').first().click();
+    </script>
 </body>
 </html>
