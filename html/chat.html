@@ -161,15 +161,17 @@
                             <p class="value">25 y.o. traveler</p>
                             <p class="attribute">Bio</p>
                         </div>
+                        <div class="clear"></div>
                     </div>
                     <div class="details-row">
                         <div class="details-icon">
-                            <span class="link-icon email"></span>
+                            <span class="link-icon username"></span>
                         </div>
                         <div class="details-data">
                             <p class="value">katana</p>
                             <p class="attribute">Username</p>
                         </div>
+                        <div class="clear"></div>
                     </div>
                     <div class="details-row">
                         <div class="details-icon">
@@ -179,6 +181,7 @@
                             <p class="value">+380976803242</p>
                             <p class="attribute">Phone</p>
                         </div>
+                        <div class="clear"></div>
                     </div>
                     <div class="details-row">
                         <div class="details-icon">
@@ -188,8 +191,11 @@
                             <p class="value">Notifications</p>
                             <p class="attribute">Enabled</p>
                         </div>
+                        <div class="clear"></div>
                     </div>
                 </div>
+
+                <div class="clear"></div>
             </div>
 
             <div class="tabs">
@@ -207,8 +213,6 @@
                     <div class="tab" data-name="audio">Audio</div>
                 </div>
             </div>
-
-
         </aside>
     </div>
 
@@ -222,5 +226,20 @@
         </clipPath>
       </defs>
     </svg>
+
+
+
+    <script>
+        $('.tabs-list a').click(function() {
+            $('.tabs-container > div').hide();
+            $('.tabs-container > div[data-name="' + $(this).data('tab') + '"]').show();
+
+            $('.tabs-list a').removeClass('active');
+            $(this).addClass('active');
+            return false;
+        });
+
+        $('.tabs-list a').first().click();
+    </script>
 </body>
 </html>

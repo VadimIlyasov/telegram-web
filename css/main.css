@@ -258,6 +258,27 @@ select {
 	background-size: 100%;
 }
 
+.link-icon.info {
+	background: url('../img/icons/info_3x.png') no-repeat;
+	width: 19px;
+	height: 19px;
+	background-size: 100%;
+}
+
+.link-icon.username {
+	background: url('../img/icons/username_3x.png') no-repeat;
+	width: 19px;
+	height: 19px;
+	background-size: 100%;
+}
+
+.link-icon.phone {
+	background: url('../img/icons/phone_3x.png') no-repeat;
+	width: 19px;
+	height: 19px;
+	background-size: 100%;
+}
+
 
 
 
@@ -607,7 +628,7 @@ select {
 	margin: auto;
 }
 
-.user-info .username {
+.user-info div.username {
 	margin-top: 20px;
 	font-weight: bold;
 	font-size: 20px;
@@ -622,16 +643,63 @@ select {
 
 .user-info .details {
 	margin-top: 40px;
+	padding: 10px;
 }
 
 .user-info .details-row {
-
+	margin: 10px 0;
 }
 
 .user-info .details-row .details-icon {
 	width: 40px;
+	float: left;
+	text-align: center;
+	padding: 5px;
 }
 
 .user-info .details-row .details-data {
-	
+	float: left;
+	padding: 0 10px;
+}
+
+.user-info .details-row .details-data .attribute {
+	color: #707579
+}
+
+
+
+/* Tabs */
+
+.tabs-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	border-bottom: 1px solid #dadce0;
+}
+
+.tabs-list li {
+	float: left;
+}
+
+.tabs-list li a {
+	color: #707579;
+	text-decoration: none;
+	display: block;
+	padding: 10px 30px;
+}
+
+.tabs-list li a.active {
+	color: #4ea4f6;
+	border-bottom: 2px solid #4ea4f6;
+}
+
+.tabs-list::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+
+.tabs-container .tab {
+	padding: 20px;
 }
