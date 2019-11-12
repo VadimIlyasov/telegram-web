@@ -1,0 +1,96 @@
+<div class="wrapper">
+    <article class="chat-window">
+        <div class="top-bar">
+            <div class="avatar">
+                <div style="background: tomato; width: 44px; height: 44px; border-radius: 44px;"></div>
+            </div>
+            <div class="info">
+                <p class="name">Vadimchik</p>
+                <p class="status">online</p>
+            </div>
+        </div>
+
+        <div class="messages-list">
+
+
+            <div class="message droplet">
+                <div class="message__text">
+                    <div class="message__text__content">Ti kto?
+                        <div class="message__time">18:12</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="message my-message droplet">
+                <div class="message__text">
+                    <div class="message__text__content">
+                        Kak dela?
+                        <div class="message__time">18:12</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="message my-message droplet">
+                <div class="message__text">
+                    <div class="message__text__content">Poydem pit' kofe
+                        <div class="message__time">18:12</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message my-message droplet">
+                <div class="message__text">
+                    <div class="message__text__content">
+                        ayAYAY
+                        <div class="message__time">18:12</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message droplet">
+                <div class="message__text">
+                    <div class="message__text__content">
+                        Coffee is a brewed drink prepared from roasted coffee beans, the seeds of berries from certain Coffea species. The genus Coffea is native to tropical Africa and Madagascar, the Comoros, Mauritius, and Réunion in the Indian Ocean.
+                        <div class="message__time">18:12</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </article>
+    <aside class="aside contacts">
+        <ul class="contacts-list">
+
+        </ul>
+    </aside>
+    <aside class="aside info">Info</aside>
+</div>
+
+<svg height="0" width="0">
+    <defs>
+        <clipPath id="left-droplet">
+            <path d="M 10,0 A 10,10 0 0 1 0,10 H 16 V 0 Z">
+        </clipPath>
+        <clipPath id="right-droplet">
+            <path d="M 6,0 A 10,10 0 0 0 16,10 H 0 V 0 Z">
+        </clipPath>
+    </defs>
+</svg>
+
+<script type="template" id="contact-tpl">
+    <li>
+        <div class="avatar">
+            <div style="background: tomato; width: 54px; height: 54px; border-radius: 54px;"></div>
+        </div>
+        <div class="info">
+            <p class="name crop"><%= name %></p>
+            <p class="last-message crop"><%= lastMessage %></p>
+            <p class="timestamp"><%= time %></p>
+            <% if (counter) { %>
+                <p class="messages-counter"><%= counter %></p>
+            <% } %>
+        </div>
+    </li>
+</script>

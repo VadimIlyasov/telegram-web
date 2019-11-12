@@ -9,9 +9,19 @@ export default {
     'prod_host': '149.154.167.50',
     'test_port': '443',
     'prod_port': '443',
-    'load_file_path': './js/load/',
-    'load_file_list': [
-        'login.js',
+    'load_components_path': './js/components/',
+    'load_extensions_path': './js/extensions/',
+    'load_modules_path': './js/modules/',
+    'load_extensions_list': [
+        'inputs.js',
+        'pad.js'
+    ],
+    'load_components_list': [
         'buttons.js'
+    ],
+    'load_modules_list': [
+        'app.js',
+        'config.js',
+        'telegram.js'
     ]
 };
