@@ -597,6 +597,8 @@ select {
 	padding: 10px;
 	position: fixed;
 	top: 0;
+	z-index: 100;
+	background: #fff;
 }
 
 .contacts-top-bar .contacts-menu-container {
