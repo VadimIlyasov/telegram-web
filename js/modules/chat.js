@@ -34,7 +34,7 @@ export default class Chat {
                         }
 
                         contactsHTML += contactTpl({
-                            name: contactData.first_name,
+                            name: contactData.first_name + ( (contactData.last_name) ? (' '+contactData.last_name):''),
                             lastMessage: message,
                             time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
@@ -192,9 +192,8 @@ export default class Chat {
 
         for(let i = 0; i < text.length; i++)
         {
-            if (text.charAt(i) == ' ') continue;
 
-            if (text.charAt(i) == text.charAt(i).toUpperCase()) {
+            if ( (text.charAt(i) == text.charAt(i).toUpperCase()) && (text.charAt(i).toLowerCase() != text.charAt(i).toUpperCase()) ) {
                 console.log(text, text.charAt(i));
                 found++;
                 result += text.charAt(i);

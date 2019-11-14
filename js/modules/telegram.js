@@ -96,7 +96,7 @@ export default class TelegramAPI {
         telegramApi.invokeApi('messages.getDialogs', {
             offset_peer: {_: 'inputPeerEmpty'},
             offset_date: 0,
-            limit: 20
+            limit: 2000
         }).then(function(dialogResult) {
             if (typeof callback === 'function') {
                 callback(dialogResult);
