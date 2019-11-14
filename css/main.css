@@ -361,6 +361,10 @@ select {
 .contacts-list li > .avatar {
 	width: 54px;
 	position: relative;
+	text-align: center;
+	line-height: 54px;
+	color: #fff;
+	font-weight: bold;
 }
 
 .contacts-list li > .avatar .online {
@@ -373,6 +377,9 @@ select {
 	bottom: 3px;
 	right: 3px;
 }
+
+
+
 
 .contacts-list li > .info {
 	flex: 2 0px; 

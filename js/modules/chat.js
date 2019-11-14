@@ -69,6 +69,8 @@ export default class Chat {
 
             $('.contacts-list li').click(function () {
                 self.loadDialogMessages($(this).data('id'), $(this).data('type'), 50);
+                $('.contacts-list li').removeClass('selected');
+                $(this).addClass('selected');
             });
 
             self.loadAvatars();
@@ -169,14 +171,50 @@ export default class Chat {
                         }
                     });
                 } else {
-                    avatarChar = $('.contacts-list li[data-id="' + index + '"]').data('name')[0];
+                    let name = $('.contacts-list li[data-id="' + index + '"]').data('name');
+                    avatarChar = self.getAvatarCode(name);
 
-                    $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<span>', {
-                        html: avatarChar
-                    })).addClass('background-char-g');
+                    $('.contacts-list li[data-id="' + index + '"] .avatar-container').css('background-color', self.getAvatarColor(name)).append(avatarChar);
                 }
             }
         });
+    }
+
+    getAvatarCode(name) {
+        let letters = this.getUpperCaseLetters(name, 2);
+
+        return '<span>' + letters + '</span>';
+    }
+
+    getUpperCaseLetters(text, num) {
+        let result = '';
+        let found = 0;
+
+        for(let i = 0; i < text.length; i++)
+        {
+            if (text.charAt(i) == ' ') continue;
+
+            if (text.charAt(i) == text.charAt(i).toUpperCase()) {
+                console.log(text, text.charAt(i));
+                found++;
+                result += text.charAt(i);
+
+                if (found == num) break;
+            }
+        }
+
+        return result;
+    }
+
+    getAvatarColor(name) {
+        let colors = ['#001f3f', '#0074D9','#7FDBFF', '#39CCCC', '#3D9970', '#2ECC40', '#01FF70', '#FFDC00', '#FF851B', '#FF4136', '#85144b', '#F012BE', '#B10DC9', '#111111', '#AAAAAA', '#DDDDDD'];
+        let sum = 0;
+
+        for(let i = 0; i < name.length; i++) {
+            sum += name.charCodeAt(i);
+        }
+
+        return colors[sum % colors.length];
     }
 }
 
