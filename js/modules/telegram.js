@@ -134,4 +134,29 @@ export default class TelegramAPI {
             callback(res);
         });
     }
+
+    getHistory(data, type, callback) {
+        let params = {};
+
+        switch (type) {
+            case 'user':
+                params._ = 'inputPeerUser';
+                params.user_id = data.id;
+                params.access_hash = data.access_hash;
+                break;
+            case 'chat':
+                params._ = 'inputPeerChat';
+                params.chat_id = data.id;
+                break;
+            case 'channel':
+                params._ = 'inputPeerChannel';
+                params.channel_id = data.id;
+                params.access_hash = data.access_hash;
+                break;
+        }
+
+        telegramApi.invokeApi('messages.getHistory', {peer: params}).then(function (res) {
+            callback(res);
+        });
+    }
 }

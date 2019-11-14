@@ -6,14 +6,14 @@ export default class Chat {
         this.dialogs = [];
         this.user_id = 0;
         this.photos = [];
+        this.telegram = new TelegramAPI();
     }
 
     loadDialogs(callback) {
         let contactTpl = _.template($('#contact-tpl').html());
-        let telegram = new TelegramAPI();
         let self = this;
 
-        telegram.getDialogs(function (res) {
+        this.telegram.getDialogs(function (res) {
             let list = self.prepareDialogsList(res);
 
             let $contactsList = $('.contacts-list');
@@ -39,7 +39,8 @@ export default class Chat {
                             time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
                             id: id,
-                            type: contactData._
+                            type: contactData._,
+                            access_hash: contactData.access_hash
                         });
                     }
                 } else {
@@ -57,7 +58,8 @@ export default class Chat {
                             time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
                             id: id,
-                            type: contactData._
+                            type: contactData._,
+                            access_hash: contactData.access_hash
                         });
                     }
                 }
@@ -107,7 +109,6 @@ export default class Chat {
         return list;
     }
 
-
     loadDialogMessages(id, type, num) {
         let messageTpl = _.template($('#message-tpl').html());
         let messagesHTML = '';
@@ -116,11 +117,11 @@ export default class Chat {
 
         num = (num || 50);
 
-        telegramApi.getHistory({
+        this.telegram.getHistory({
             id: id,
             take: num,
-            type: type
-        }).then(function (data) {
+            access_hash: $('.contacts-list li[data-id="' + id + '"]').data('access-hash')
+        }, type, function (data) {
             var totalCount = data.count || data.messages.length;
 
             data.messages.forEach(function (message) {
@@ -147,9 +148,9 @@ export default class Chat {
     loadAvatars() {
         let data = [];
         let photo = {};
-        let telegram = new TelegramAPI();
         let photos = this.photos;
         let avatarChar = '';
+        let self = this;
 
         $('.contacts-list li').each(function () {
             data.push($(this).data('id'));
@@ -160,7 +161,7 @@ export default class Chat {
                 photo = photos[index];
 
                 if (photo) {
-                    telegram.getAvatar(photo, function (res) {
+                    self.telegram.getAvatar(photo, function (res) {
                         if (res) {
                             $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<img>', {
                                 src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
