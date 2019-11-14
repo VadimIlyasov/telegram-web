@@ -26,6 +26,7 @@ $(document).ready(function () {
             });
         })
         .then(function () {
+            console.log(app.getCookie('userHash'), CryptoJS.SHA256(localStorage.code).toString());
             if (app.getCookie('userHash') === CryptoJS.SHA256(localStorage.code).toString()) {
                 window.location.hash = '#chat';
             } else {

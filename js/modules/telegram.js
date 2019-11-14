@@ -104,12 +104,40 @@ export default class TelegramAPI {
         });
     }
 
-    getPhotos(userId, callback) {
+    getUserPhotos(user, callback) {
+        let userId = {
+            _: user.type,
+            user_id: user.id,
+            access_hash: user.access_hash
+        };
+
         telegramApi.invokeApi('photos.getUserPhotos', {
             user_id: userId
         }).then(function(res) {
             if (typeof callback === 'function') {
                 callback(res);
+            }
+        });
+    }
+    
+    getAvatar(user, callback) {
+        this.getUserPhotos(user, function (data) {
+            if (data && typeof data.photos[0] !== 'undefined') {
+                let photo = data.photos[0].sizes[0].location;
+                let locationData = {
+                    _:'inputFileLocation',
+                    local_id: photo.local_id,
+                    secret: photo.secret,
+                    volume_id: photo.volume_id
+                };
+
+                telegramApi.invokeApi('upload.getFile', {
+                    location: locationData
+                }).then(function (res) {
+                    callback(res);
+                })
+            } else {
+                callback(data);
             }
         });
     }

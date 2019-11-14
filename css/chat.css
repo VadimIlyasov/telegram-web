@@ -4,3 +4,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.avatar-container {
+    width: 54px;
+    height: 54px;
+    border-radius: 54px;
+    overflow: hidden;
+}
+
+.avatar-container img {
+    width: 54px;
+    height: 54px;
+}

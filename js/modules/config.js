@@ -14,7 +14,8 @@ export default {
     'load_modules_path': './js/modules/',
     'load_extensions_list': [
         'inputs.js',
-        'pad.js'
+        'pad.js',
+        'toBase64.js'
     ],
     'load_components_list': [
         'buttons.js'

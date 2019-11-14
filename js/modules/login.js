@@ -36,7 +36,7 @@ $(document).ready(function () {
                         .focusDecoration();
 
                     $(document).on('submit', '.auth-code-form', function() {
-                        telegram.signIn(phoneNumber, $(this).val(), function(res) {
+                        telegram.signIn(phoneNumber, $('#auth-code').val(), function(res) {
                             if (false) {
                                 body.load('./html/components/auth-password.html', function () {
                                     $('input[type="text"]')

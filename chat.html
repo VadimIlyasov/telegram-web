@@ -80,9 +80,11 @@
 </svg>
 
 <script type="template" id="contact-tpl">
-    <li>
+    <li data-entity-id="<%= id %>" data-access-hash="<%= access_hash %>" data-type="<%= type %>">
         <div class="avatar">
-            <div style="background: tomato; width: 54px; height: 54px; border-radius: 54px;"></div>
+            <div class="avatar-container">
+                <img src="">
+            </div>
         </div>
         <div class="info">
             <p class="name crop"><%= name %></p>

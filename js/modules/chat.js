@@ -22,17 +22,18 @@ $(document).ready(function () {
             if (el.peer.user_id) {
                 if (typeof list['users'][id] !== 'undefined') {
                     contactData = list['users'][id];
-                    contactsHTML += contactTpl({name: contactData.first_name, lastMessage: message, time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(), counter: el.unread_count});
+                    contactsHTML += contactTpl({name: contactData.first_name, lastMessage: message, time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(), counter: el.unread_count, id: id, access_hash: contactData.access_hash, type: 'inputUser'});
                 }
             } else {
                 if (typeof list['chats'][id] !== 'undefined') {
                     contactData = list['chats'][id];
-                    contactsHTML += contactTpl({name: contactData.title, lastMessage: message, time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(), counter: el.unread_count});
+                    contactsHTML += contactTpl({name: contactData.title, lastMessage: message, time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(), counter: el.unread_count, id: id, access_hash: contactData.access_hash, type: contactData._});
                 }
             }
         });
 
         $contactsList.append(contactsHTML);
+        loadAvatars();
     });
 });
 
@@ -68,4 +69,26 @@ function prepareDialogsList(data) {
     });
 
     return list;
+}
+
+function loadAvatars() {
+    let data = [];
+    let telegram = new TelegramAPI();
+
+    $('.contacts-list li').each(function () {
+        data.push({
+            id: $(this).data('entity-id'),
+            access_hash: $(this).data('access_hash'),
+            type: $(this).data('type'),
+        });
+    });
+
+    data.forEach(function (el) {
+        telegram.getAvatar(el,function (res) {
+            if (res) {
+                $('.contacts-list li[data-entity-id="' + el.id + '"] img').attr('src', 'data:image/jpeg;base64,' + toBase64(res.bytes));
+            }
+
+        });
+    });
 }
