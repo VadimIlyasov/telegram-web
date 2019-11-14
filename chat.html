@@ -154,6 +154,22 @@
     </aside>
 </div>
 
+
+
+
+    <script>
+        $('.tabs-list a').click(function() {
+            $('.tabs-container > div').hide();
+            $('.tabs-container > div[data-name="' + $(this).data('tab') + '"]').show();
+
+            $('.tabs-list a').removeClass('active');
+            $(this).addClass('active');
+            return false;
+        });
+
+        $('.tabs-list a').first().click();
+    </script>
+
 <svg height="0" width="0">
     <defs>
         <clipPath id="left-droplet">
