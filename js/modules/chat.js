@@ -23,6 +23,7 @@ export default class Chat {
                 let date = new Date(list.messages[el.top_message].date * 1000);
                 let message = list.messages[el.top_message].message;
 
+
                 if (el.peer.user_id) {
                     if (typeof list['users'][id] !== 'undefined') {
                         contactData = list['users'][id];
@@ -33,7 +34,7 @@ export default class Chat {
                             counter: el.unread_count,
                             id: id,
                             access_hash: contactData.access_hash,
-                            type: 'inputUser'
+                            type: contactData._
                         });
                     }
                 } else {
@@ -143,7 +144,7 @@ export default class Chat {
             data.push({
                 id: $(this).data('id'),
                 access_hash: $(this).data('access_hash'),
-                type: $(this).data('type'),
+                type: 'inputUser',
             });
         });
 
