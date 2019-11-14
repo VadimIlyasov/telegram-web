@@ -5,6 +5,7 @@ export default class Chat {
         this.users = [];
         this.dialogs = [];
         this.user_id = 0;
+        this.photos = [];
     }
 
     loadDialogs(callback) {
@@ -23,30 +24,39 @@ export default class Chat {
                 let date = new Date(list.messages[el.top_message].date * 1000);
                 let message = list.messages[el.top_message].message;
 
-
                 if (el.peer.user_id) {
                     if (typeof list['users'][id] !== 'undefined') {
                         contactData = list['users'][id];
+                        self.photos[id] = false;
+
+                        if (contactData.photo && contactData.photo.photo_small !== undefined) {
+                            self.photos[id] = contactData.photo.photo_small;
+                        }
+
                         contactsHTML += contactTpl({
                             name: contactData.first_name,
                             lastMessage: message,
                             time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
                             id: id,
-                            access_hash: contactData.access_hash,
                             type: contactData._
                         });
                     }
                 } else {
                     if (typeof list['chats'][id] !== 'undefined') {
                         contactData = list['chats'][id];
+                        self.photos[id] = false;
+
+                        if (contactData.photo && contactData.photo.photo_small !== undefined) {
+                            self.photos[id] = contactData.photo.photo_small;
+                        }
+
                         contactsHTML += contactTpl({
                             name: contactData.title,
                             lastMessage: message,
                             time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
                             id: id,
-                            access_hash: contactData.access_hash,
                             type: contactData._
                         });
                     }
@@ -114,8 +124,6 @@ export default class Chat {
             var totalCount = data.count || data.messages.length;
 
             data.messages.forEach(function (message) {
-                console.log(message);
-
                 let date = new Date(message.date * 1000);
 
                 $('.messages-list').prepend(messageTpl({
@@ -138,26 +146,35 @@ export default class Chat {
 
     loadAvatars() {
         let data = [];
+        let photo = {};
         let telegram = new TelegramAPI();
+        let photos = this.photos;
+        let avatarChar = '';
 
         $('.contacts-list li').each(function () {
-            data.push({
-                id: $(this).data('id'),
-                access_hash: $(this).data('access_hash'),
-                type: 'inputUser',
-            });
+            data.push($(this).data('id'));
         });
 
-        console.log(data);
+        data.forEach(function (index) {
+            if (photos[index] !== undefined) {
+                photo = photos[index];
 
-        data.forEach(function (el) {
-            telegram.getAvatar(el, function (res) {
-                console.log(res);
-                if (res) {
-                    $('.contacts-list li[data-id="' + el.id + '"] img').attr('src', 'data:image/jpeg;base64,' + toBase64(res.bytes));
+                if (photo) {
+                    telegram.getAvatar(photo, function (res) {
+                        if (res) {
+                            $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<img>', {
+                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
+                            }));
+                        }
+                    });
+                } else {
+                    avatarChar = $('.contacts-list li[data-id="' + index + '"]').data('name')[0];
+
+                    $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<span>', {
+                        html: avatarChar
+                    })).addClass('background-char-g');
                 }
-
-            });
+            }
         });
     }
 }

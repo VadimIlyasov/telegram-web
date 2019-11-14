@@ -12,7 +12,13 @@
     overflow: hidden;
 }
 
-.avatar-container img {
+.avatar-container img,
+.avatar-container span
+{
     width: 54px;
     height: 54px;
+}
+
+.background-char-g {
+    background-color: #4ea4f6;
 }
