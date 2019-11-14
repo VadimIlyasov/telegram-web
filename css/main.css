@@ -327,8 +327,8 @@ select {
 
 .wrapper > .aside { flex: 1 0 0; }
 
-.wrapper > .chat-window { flex: 2 0px; background: #e6ebee; }
-.wrapper > .contacts { order: 1; background: #fff; border: 1px solid #dadce0; }
+.wrapper > .chat-window { flex: 2 0px; background: #e6ebee; height: 100%; overflow: auto; position: relative; padding-top: 100px; }
+.wrapper > .contacts { order: 1; background: #fff; border: 1px solid #dadce0; height: 100%; overflow: auto; position: relative; padding-top: 65px; }
 .wrapper > .chat-window    { order: 2; }
 .wrapper > .info { order: 3; }
 
@@ -413,7 +413,7 @@ select {
 
 /* Top Bar */
 
-.top-bar {
+.chat-window .top-bar {
 	width: 100%;
 	background: #fff;
 	padding: 10px 20px;
@@ -421,19 +421,22 @@ select {
 	display: flex;  
   	flex-flow: row wrap;
   	cursor: pointer;
+  	position: fixed;
+  	top: 0;
+  	z-index: 100;
 }
 
-.top-bar .info {
+.chat-window .top-bar .info {
 	flex: 2 0px; 
 	padding: 0 15px;
 }
 
-.top-bar .name {
+.chat-window .top-bar .name {
 	color: #000;
 	font-weight: bold;
 }
 
-.top-bar .status {
+.chat-window .top-bar .status {
 	color: #3390ec;
 	font-size: 12px;
 }
@@ -445,14 +448,13 @@ select {
 	width: 712px;
 	margin: auto;
 
-
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: flex-end;
-  margin-left: 16px;
-  margin-right: 16px;
-  margin-bottom: 6px;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	justify-content: flex-end;
+	margin-left: 16px;
+	margin-right: 16px;
+	margin-bottom: 6px;
 }
 
 
@@ -593,6 +595,10 @@ select {
 
 .contacts-top-bar {
 	padding: 10px;
+	position: fixed;
+	top: 0;
+	z-index: 100;
+	background: #fff;
 }
 
 .contacts-top-bar .contacts-menu-container {

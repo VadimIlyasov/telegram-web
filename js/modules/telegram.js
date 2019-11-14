@@ -29,53 +29,53 @@ export default class TelegramAPI {
     }
 
     sendCode(phoneNumber, callback) {
-        let sentCode = {
-            is_password: false,
-            phone_code_hash: "5c4ea02f9f0ff0b0e5",
-            phone_registered: true,
-            send_call_timeout: 3600
-        };
+        // let sentCode = {
+        //     is_password: false,
+        //     phone_code_hash: "5c4ea02f9f0ff0b0e5",
+        //     phone_registered: true,
+        //     send_call_timeout: 3600
+        // };
 
-        callback(sentCode);
-        // telegramApi.sendCode(phoneNumber).then(function(sentCode) {
-        //     window.phone_code_hash = sentCode.phone_code_hash;
-        //
-        //     if (!sentCode.phone_registered) {
-        //         // New user
-        //     } else {
-        //         if (typeof callback === 'function') {
-        //             callback(sentCode);
-        //         }
-        //     }
-        // });
+        // callback(sentCode);
+        telegramApi.sendCode(phoneNumber).then(function(sentCode) {
+            window.phone_code_hash = sentCode.phone_code_hash;
+        
+            if (!sentCode.phone_registered) {
+                // New user
+            } else {
+                if (typeof callback === 'function') {
+                    callback(sentCode);
+                }
+            }
+        });
     }
 
     signIn(phoneNumber, code, callback, errorCallback) {
         localStorage.setItem('code', code);
 
         let app = new App();
-        let err = {
-            code: 400,
-            description: "CODE#400 PHONE_CODE_INVALID",
-            handled: true,
-            input: "auth.signIn",
-            type: "PHONE_CODE_INVALID"
-        };
+        // let err = {
+        //     code: 400,
+        //     description: "CODE#400 PHONE_CODE_INVALID",
+        //     handled: true,
+        //     input: "auth.signIn",
+        //     type: "PHONE_CODE_INVALID"
+        // };
 
-        app.setCookie('userHash', CryptoJS.SHA256(code).toString());
-        callback();
-        // telegramApi.signIn(phoneNumber, window.phone_code_hash, code).then(function() {
-        //     delete window.phone_code_hash;
-        //
-        //     app.setCookie('userHash', CryptoJS.SHA256(code).toString());
-        //     if (typeof callback === 'function') {
-        //         callback();
-        //     }
-        // }, function(err) {
-        //     if (typeof errorCallback === 'function') {
-        //         errorCallback(err);
-        //     }
-        // });
+        // app.setCookie('userHash', CryptoJS.SHA256(code).toString());
+        // callback();
+        telegramApi.signIn(phoneNumber, window.phone_code_hash, code).then(function() {
+            delete window.phone_code_hash;
+        
+            app.setCookie('userHash', CryptoJS.SHA256(code).toString());
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }, function(err) {
+            if (typeof errorCallback === 'function') {
+                errorCallback(err);
+            }
+        });
     }
 
     twoFactorAuth() {
