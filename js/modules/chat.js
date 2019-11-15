@@ -234,9 +234,28 @@ export default class Chat {
         // Display date
         return (chatDate.getMonth()+1)+'/'+chatDate.getDate() + '/' + chatDate.getFullYear().toString().substr(-2);
     }
+
+    initSearch() {
+        $('.search-bar-container input').keyup(function() {
+            if ($(this).val()) {
+                let filter = $(this).val().toLowerCase();
+                $('.contacts-list > li').hide();
+
+
+                $('.contacts-list > li').each(function(index, item) {
+                    if ($(item).data('name').toLowerCase().indexOf(filter) > -1) {
+                        $(item).show();
+                    }
+                })
+            } else {
+                $('.contacts-list > li').show();
+            }
+        });
+    }
 }
 
 $(document).ready(function () {
     let chat = new Chat();
     chat.loadDialogs();
+    chat.initSearch();
 });
