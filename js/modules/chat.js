@@ -69,7 +69,6 @@ export default class Chat {
 
             $('.contacts-list li').click(function () {
 
-                self.loadDialogMessages($(this).data('id'), $(this).data('type'), 50);
                 $('.contacts-list li').removeClass('selected');
                 $(this).addClass('selected');
 
@@ -143,7 +142,7 @@ export default class Chat {
 
         this.telegram.getHistory({
             id: id,
-            take: num,
+            limit: num,
             access_hash: $('.contacts-list li[data-id="' + id + '"]').data('access-hash')
         }, type, function (data) {
             var totalCount = data.count || data.messages.length;

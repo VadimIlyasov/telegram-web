@@ -155,6 +155,14 @@ export default class TelegramAPI {
                 break;
         }
 
+        if (data.max_id) {
+            params.max_id = data.max_id;
+        }
+
+        if (data.limit) {
+            params.limit = data.limit;
+        }
+
         telegramApi.invokeApi('messages.getHistory', {peer: params}).then(function (res) {
             callback(res);
         });
