@@ -407,7 +407,16 @@ export default class Chat {
                 self.telegram.getMessages([data.id], function(messages) {
                     console.log(messages.messages[0]);
 
-                    self.addNewMessage(messages.messages[0]);
+                    self.addNewMessage('user', data.user_id, messages.messages[0]);
+                    // self.updateContactsWindow();
+                    // self.updateCounter();
+                });
+            } else if (data._ == 'updateShortChatMessage') {
+                // message from user
+                self.telegram.getMessages([data.id], function(messages) {
+                    console.log(messages.messages[0]);
+
+                    self.addNewMessage('chat', data.chat_id, messages.messages[0]);
                     // self.updateContactsWindow();
                     // self.updateCounter();
                 });
@@ -415,21 +424,40 @@ export default class Chat {
         });
     }
 
-    addNewMessage(message) {
-        let messageTpl = _.template($('#message-tpl').html());
-        let messagesHTML = '';
+    addNewMessage(dialogType, dialogID, message) {
         let self = this;
 
+        // Update messages counter
+        self.addCounter(dialogType, dialogID);
 
-        let date = new Date(message.date * 1000);
+        // Append message to the dialog
+        if ((self.type == dialogType) && (dialogID == self.id)) {
+            let messageTpl = _.template($('#message-tpl').html());
+            let messagesHTML = '';
+            let self = this;
 
-        $('.messages-list').append(messageTpl({
-            id: message.id,
-            message_type: (message.from_id === self.user.id) ? 'my-message' : '',
-            message: message.message,
-            from: message.from_id,
-            time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
-        }));
+            let date = new Date(message.date * 1000);
+
+            $('.messages-list').append(messageTpl({
+                id: message.id,
+                message_type: (message.from_id === self.user.id) ? 'my-message' : '',
+                message: message.message,
+                from: message.from_id,
+                time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
+            }));
+        }
+
+        // Update last message in contacts list
+        $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+'] .last-message').html(message.message);
+    }
+
+    addCounter(dialogType, dialogID) {
+        let counterEl = $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+'] .messages-counter');
+        if (!counterEl.length) {
+            $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+'] .info').append('<p class="messages-counter">1</p>');
+        } else {
+            counterEl.text(1+parseInt(counterEl.text()));
+        }
     }
 }
 
