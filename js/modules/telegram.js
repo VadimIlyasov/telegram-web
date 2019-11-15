@@ -174,7 +174,7 @@ export default class TelegramAPI {
         });
     }
 
-    getUserById(id,access_hash, callback) {
+    getUserById(id, access_hash, callback) {
         let userInput =  {
             user_id: id,
             access_hash: access_hash,
@@ -182,7 +182,25 @@ export default class TelegramAPI {
         };
 
         telegramApi.invokeApi('users.getUsers', {id: [userInput]}).then(function (info) {
-            let res = [];
+            let res = {};
+
+            if (info.length) {
+                res = info[0];
+            }
+
+            callback(res);
+        });
+    }
+
+    getChatById(id, access_hash, callback) {
+        let channelInput =  {
+            channel_id: id,
+            access_hash: access_hash,
+            _: 'inputChannel'
+        };
+
+        telegramApi.invokeApi('channels.getChannels', {id: [channelInput]}).then(function (info) {
+            let res = {};
 
             if (info.length) {
                 res = info[0];
