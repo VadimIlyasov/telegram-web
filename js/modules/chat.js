@@ -283,6 +283,7 @@ export default class Chat {
                 $('.contacts-list > li').show();
             }
         });
+    }
 
     loadCurrentUserData() {
         let self = this;
