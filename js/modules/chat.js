@@ -408,17 +408,13 @@ export default class Chat {
                     console.log(messages.messages[0]);
 
                     self.addNewMessage('user', data.user_id, messages.messages[0]);
-                    // self.updateContactsWindow();
-                    // self.updateCounter();
                 });
             } else if (data._ == 'updateShortChatMessage') {
-                // message from user
+                // message from chat
                 self.telegram.getMessages([data.id], function(messages) {
                     console.log(messages.messages[0]);
 
                     self.addNewMessage('chat', data.chat_id, messages.messages[0]);
-                    // self.updateContactsWindow();
-                    // self.updateCounter();
                 });
             }
         });
