@@ -4,7 +4,7 @@ export default class Chat {
     constructor() {
         this.users = [];
         this.dialogs = [];
-        this.user_id = 0;
+        this.user = {};
         this.photos = [];
         this.telegram = new TelegramAPI();
     }
@@ -68,7 +68,25 @@ export default class Chat {
             $contactsList.append(contactsHTML);
 
             $('.contacts-list li').click(function () {
-                self.loadDialogMessages($(this).data('id'), $(this).data('type'), 50);
+                let id = $(this).data('id'),
+                    type = $(this).data('type'),
+                    accessHash = $(this).data('access-hash');
+
+                self.loadDialogMessages(id, type, accessHash, 50);
+
+                self.telegram.getUserById(id, accessHash, function (info) {
+                    console.log(info);
+                    let title = self.getUserName(info) || info.title;
+                    let status = '';
+
+                    $('.chat-window .info .name').html(title);
+
+                    if (info.status.expires) {
+                        status = 'Online';
+                    }
+
+                    $('.chat-window .info .status').html(status);
+                });
             });
 
             self.loadAvatars();
@@ -109,9 +127,10 @@ export default class Chat {
         return list;
     }
 
-    loadDialogMessages(id, type, num) {
+    loadDialogMessages(id, type, accessHash, num) {
         let messageTpl = _.template($('#message-tpl').html());
         let messagesHTML = '';
+        let self = this;
 
         $('.messages-list').empty();
 
@@ -129,7 +148,7 @@ export default class Chat {
 
                 $('.messages-list').prepend(messageTpl({
                     id: id,
-                    message_type: (message.from_id == 517665176) ? 'my-message' : '',
+                    message_type: (message.from_id === self.user.id) ? 'my-message' : '',
                     message: message.message,
                     from: message.from_id,
                     time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
@@ -148,7 +167,6 @@ export default class Chat {
     loadAvatars() {
         let data = [];
         let photo = {};
-        let photos = this.photos;
         let avatarChar = '';
         let self = this;
 
@@ -157,12 +175,15 @@ export default class Chat {
         });
 
         data.forEach(function (index) {
-            if (photos[index] !== undefined) {
-                photo = photos[index];
+            if (self.photos[index] !== undefined) {
+                let avatarExists = false;
+                photo = self.photos[index];
 
                 if (photo) {
                     self.telegram.getAvatar(photo, function (res) {
                         if (res) {
+                            avatarExists = true;
+
                             $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<img>', {
                                 src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
                             }));
@@ -175,12 +196,34 @@ export default class Chat {
                         html: avatarChar
                     })).addClass('background-char-g');
                 }
+
+                // if (!avatarExists) {
+                //     avatarChar = $('.contacts-list li[data-id="' + index + '"]').data('name')[0];
+                //
+                //     $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<span>', {
+                //         html: avatarChar
+                //     })).addClass('background-char-g');
+                // }
             }
         });
+    }
+
+    loadCurrentUserData() {
+        let self = this;
+
+        this.telegram.getUserInfo(function (user) {
+            self.user = user;
+        });
+    }
+
+    getUserName(user) {
+        return user.first_name + ( (user.last_name) ? (' ' + user.last_name) : '');
     }
 }
 
 $(document).ready(function () {
     let chat = new Chat();
+
+    chat.loadCurrentUserData();
     chat.loadDialogs();
 });

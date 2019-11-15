@@ -159,4 +159,28 @@ export default class TelegramAPI {
             callback(res);
         });
     }
+
+    getUserInfo(callback) {
+        telegramApi.getUserInfo().then(function(user) {
+            callback(user);
+        });
+    }
+
+    getUserById(id,access_hash, callback) {
+        let userInput =  {
+            user_id: id,
+            access_hash: access_hash,
+            _: 'inputUser'
+        };
+
+        telegramApi.invokeApi('users.getUsers', {id: [userInput]}).then(function (info) {
+            let res = [];
+
+            if (info.length) {
+                res = info[0];
+            }
+
+            callback(res);
+        });
+    }
 }
