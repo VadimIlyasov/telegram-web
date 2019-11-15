@@ -76,7 +76,6 @@ export default class Chat {
             $contactsList.append(contactsHTML);
 
             $('.contacts-list li').click(function () {
-
                 $('.messages-list').empty();
 
                 self.accessHash = $(this).data('access-hash');
@@ -332,28 +331,19 @@ export default class Chat {
     }
 
     renderTopChatInfo(data, entityId) {
-        let title = '',
-            status = '',
-            statusColor = 'grey';
+        let title = '';
 
         if (Object.keys(data).length) {
             title = this.getUserName(data);
 
             if (data.status) {
-                console.log(data.status);
-                if (data.status.expires) {
-                    status = 'Online';
-                    statusColor = '#3390ec';
-                } else if (data.status.was_online) {
-                    status = 'last seen ' + this.getChatTopBarDate(data.status.was_online);
-                }
+               this.setChatTopBarStatus(data.status._, data.status.was_online, entityId);
             }
         } else {
             title = this.chats[entityId].title
         }
 
         $('.chat-window .info .name').html(title);
-        $('.chat-window .info .status').html(status).css('color', statusColor);
 
         if (this.photos[entityId]) {
             $('.top-bar .avatar-container').html($('<img>', {
@@ -363,6 +353,25 @@ export default class Chat {
             let avatarChar = this.getAvatarCode(title);
 
             $('.top-bar .avatar-container').css('background-color', this.getAvatarColor(this.chats[entityId].title)).html(avatarChar);
+        }
+    }
+
+    setChatTopBarStatus(statusType, timestamp, userId) {
+        let statusColor = 'black';
+        let barStatusUserId = $('.chat-window .info .status').data('user-id');
+
+        console.log(statusType);
+        if (statusType === 'userStatusOnline') {
+            status = 'Online';
+            statusColor = '#3390ec';
+        } else if (statusType === 'userStatusOffline') {
+            status = 'last seen ' + this.getChatTopBarDate(timestamp);
+        }
+
+        if (barStatusUserId && barStatusUserId === userId) {
+            $('.chat-window .info .status').html(status).css('color', statusColor);
+        } else {
+            $('.chat-window .info .status').data('user-id', userId).html(status).css('color', statusColor);
         }
     }
 
@@ -402,15 +411,23 @@ export default class Chat {
         self.telegram.subscribe(function (data) {
             console.log(data);
 
-            if (data._ == 'updateShortMessage') {
-                // message from user
-                self.telegram.getMessages([data.id], function(messages) {
-                    console.log(messages.messages[0]);
+            switch (data._) {
+                case 'updateShort':
+                    if (data.update._ === 'updateUserStatus') {
+                        // updateUserStatus in top bar
+                        self.setChatTopBarStatus(data.update.status._, data.update.status.was_online, data.update.user_id);
+                    }
+                    break;
+                case 'updateShortMessage':
+                    // message from user
+                    self.telegram.getMessages([data.id], function (messages) {
+                        console.log(messages.messages[0]);
 
-                    self.addNewMessage(messages.messages[0]);
-                    // self.updateContactsWindow();
-                    // self.updateCounter();
-                });
+                        self.addNewMessage(messages.messages[0]);
+                        // self.updateContactsWindow();
+                        // self.updateCounter();
+                    });
+                    break;
             }
         });
     }
@@ -430,6 +447,26 @@ export default class Chat {
             from: message.from_id,
             time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
         }));
+    }
+
+    updateContactStatus(statusType, timestamp, userId) {
+        // <div class="online"></div>
+        let statusColor = 'black';
+        let barStatusUserId = $('.chat-window .info .status').data('user-id');
+
+        console.log(statusType);
+        if (statusType === 'userStatusOnline') {
+            status = 'Online';
+            statusColor = '#3390ec';
+        } else if (statusType === 'userStatusOffline') {
+            status = 'last seen ' + this.getChatTopBarDate(timestamp);
+        }
+
+        if (barStatusUserId && barStatusUserId === userId) {
+            $('.chat-window .info .status').html(status).css('color', statusColor);
+        } else {
+            $('.chat-window .info .status').data('user-id', userId).html(status).css('color', statusColor);
+        }
     }
 }
 
