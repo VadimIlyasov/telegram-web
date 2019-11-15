@@ -168,6 +168,12 @@ export default class TelegramAPI {
         });
     }
 
+    getMessages(ids, callback) {
+        telegramApi.invokeApi('messages.getMessages', {id: ids}).then(function (res) {
+            callback(res);
+        });
+    }
+
     getUserInfo(callback) {
         telegramApi.getUserInfo().then(function(user) {
             callback(user);

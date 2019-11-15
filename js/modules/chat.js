@@ -397,9 +397,39 @@ export default class Chat {
     }
 
     initNotifications() {
-        this.telegram.subscribe(function (data) {
+        let self = this;
+
+        self.telegram.subscribe(function (data) {
             console.log(data);
+
+            if (data._ == 'updateShortMessage') {
+                // message from user
+                self.telegram.getMessages([data.id], function(messages) {
+                    console.log(messages.messages[0]);
+
+                    self.addNewMessage(messages.messages[0]);
+                    // self.updateContactsWindow();
+                    // self.updateCounter();
+                });
+            }
         });
+    }
+
+    addNewMessage(message) {
+        let messageTpl = _.template($('#message-tpl').html());
+        let messagesHTML = '';
+        let self = this;
+
+
+        let date = new Date(message.date * 1000);
+
+        $('.messages-list').append(messageTpl({
+            id: message.id,
+            message_type: (message.from_id === self.user.id) ? 'my-message' : '',
+            message: message.message,
+            from: message.from_id,
+            time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
+        }));
     }
 }
 
