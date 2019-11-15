@@ -80,7 +80,7 @@ export default class Chat {
                 self.loadDialogMessages(id, type, accessHash, 50);
 
                 self.telegram.getUserById(id, accessHash, function (info) {
-                    console.log(info);
+                    // console.log(info);
                     let title = self.getUserName(info) || info.title;
                     let status = '';
 
@@ -219,7 +219,6 @@ export default class Chat {
         {
 
             if ( (text.charAt(i) == text.charAt(i).toUpperCase()) && (text.charAt(i).toLowerCase() != text.charAt(i).toUpperCase()) ) {
-                console.log(text, text.charAt(i));
                 found++;
                 result += text.charAt(i);
 
