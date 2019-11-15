@@ -328,7 +328,7 @@ select {
 .wrapper > .aside { flex: 1 0 0; }
 
 .wrapper > .chat-window { flex: 2 0px; background: #e6ebee; height: 100%; overflow: auto; position: relative; padding-top: 100px; }
-.wrapper > .contacts { order: 1; background: #fff; border: 1px solid #dadce0; height: 100%; overflow: auto; position: relative; padding-top: 65px; }
+.wrapper > .contacts { order: 1; background: #fff; border: 1px solid #dadce0; height: 100%; overflow: auto; position: relative; padding-top: 65px; border-top: 0;}
 .wrapper > .chat-window    { order: 2; }
 .wrapper > .info { order: 3; }
 
@@ -615,7 +615,7 @@ select {
 
 .contacts-top-bar .search-bar-container {
 	float: right;
-	width: 350px;
+	/*width: 350px;*/
 }
 
 .search-bar-container input {
