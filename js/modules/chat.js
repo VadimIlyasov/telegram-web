@@ -9,6 +9,11 @@ export default class Chat {
         this.user = {};
         this.photos = [];
         this.telegram = new TelegramAPI();
+
+
+        this.accessHash = '';
+        this.id = 0;
+        this.type = '';
     }
 
     loadDialogs(callback) {
@@ -70,6 +75,12 @@ export default class Chat {
             $contactsList.append(contactsHTML);
 
             $('.contacts-list li').click(function () {
+
+                $('.messages-list').empty();
+
+                self.accessHash = $(this).data('access-hash');
+                self.type = $(this).data('type');
+                self.id = $(this).data('id');
 
                 $('.contacts-list li').removeClass('selected');
                 $(this).addClass('selected');
@@ -153,18 +164,19 @@ export default class Chat {
         return list;
     }
 
-    loadDialogMessages(id, type, accessHash, num) {
+    loadDialogMessages(id, type, accessHash, num, max_id) {
         let messageTpl = _.template($('#message-tpl').html());
         let messagesHTML = '';
         let self = this;
 
-        $('.messages-list').empty();
+        // $('.messages-list').empty();
 
         num = (num || 50);
 
         this.telegram.getHistory({
             id: id,
             limit: num,
+            max_id: max_id,
             access_hash: $('.contacts-list li[data-id="' + id + '"]').data('access-hash')
         }, type, function (data) {
             var totalCount = data.count || data.messages.length;
@@ -173,7 +185,7 @@ export default class Chat {
                 let date = new Date(message.date * 1000);
 
                 $('.messages-list').prepend(messageTpl({
-                    id: id,
+                    id: message.id,
                     message_type: (message.from_id === self.user.id) ? 'my-message' : '',
                     message: message.message,
                     from: message.from_id,
@@ -318,6 +330,22 @@ export default class Chat {
     getUserName(user) {
         return user.first_name + ( (user.last_name) ? (' ' + user.last_name) : '');
     }
+
+    initMessagesWindow() {
+        let self = this;
+
+        // On scroll to top
+        $('.chat-window').scroll(function() {
+            if ($(this).scrollTop() == 0) {
+
+                if ($('.messages-list .message').length) {
+                    // get ID of the oldest message
+                    let max_id = $('.messages-list .message').first().data('id');
+                    self.loadDialogMessages(self.id, self.type, self.accessHash, 50, max_id);
+                }
+            }
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -326,4 +354,5 @@ $(document).ready(function () {
     chat.loadCurrentUserData();
     chat.loadDialogs();
     chat.initSearch();
+    chat.initMessagesWindow();
 });
