@@ -1,4 +1,5 @@
 import TelegramAPI from "./telegram.js";
+import App from "./app.js";
 
 export default class Chat {
     constructor() {
@@ -27,12 +28,12 @@ export default class Chat {
                 let message = list.messages[el.top_message].message;
 
                 if (el.peer.user_id) {
-                    if (typeof list['users'][id] !== 'undefined') {
-                        contactData = list['users'][id];
-                        self.photos[id] = false;
+                    if (typeof list['users'][el.id] !== 'undefined') {
+                        contactData = list['users'][el.id];
+                        self.photos[el.id] = false;
 
                         if (contactData.photo && contactData.photo.photo_small !== undefined) {
-                            self.photos[id] = contactData.photo.photo_small;
+                            self.photos[el.id] = contactData.photo.photo_small;
                         }
 
                         contactsHTML += contactTpl({
@@ -40,18 +41,18 @@ export default class Chat {
                             lastMessage: message,
                             time: self.getChatDate(list.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
-                            id: id,
+                            id: el.id,
                             type: contactData._,
                             access_hash: contactData.access_hash
                         });
                     }
                 } else {
-                    if (typeof list['chats'][id] !== 'undefined') {
-                        contactData = list['chats'][id];
-                        self.photos[id] = false;
+                    if (typeof list['chats'][el.id] !== 'undefined') {
+                        contactData = list['chats'][el.id];
+                        self.photos[el.id] = false;
 
                         if (contactData.photo && contactData.photo.photo_small !== undefined) {
-                            self.photos[id] = contactData.photo.photo_small;
+                            self.photos[el.id] = contactData.photo.photo_small;
                         }
 
                         contactsHTML += contactTpl({
@@ -59,7 +60,7 @@ export default class Chat {
                             lastMessage: message,
                             time: self.getChatDate(list.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
-                            id: id,
+                            id: el.id,
                             type: contactData._,
                             access_hash: contactData.access_hash
                         });
@@ -81,28 +82,13 @@ export default class Chat {
                 switch (type) {
                     case 'user':
                         self.telegram.getUserById(id, accessHash, function (info) {
-                            let title = self.getUserName(info),
-                                status = '';
-
-                            if (info.status.expires) {
-                                status = 'Online';
-                            }
-
-                            $('.chat-window .info .name').html(title);
-                            $('.chat-window .info .status').html(status);
-                            $('.top-bar .avatar-container').html($('<img>', {
-                                src: self.photos[id]
-                            }));
+                           self.renderTopChatInfo(info, id);
                         });
 
                         break;
                     case 'channel':
                     case 'chat':
-                        $('.chat-window .info .name').html(self.chats[id].title);
-                        $('.chat-window .info .status').html('');
-                        $('.top-bar .avatar-container').append($('<img>', {
-                            src: this.photos[id]
-                        }));
+                        self.renderTopChatInfo({}, id);
 
                         break;
                 }
@@ -125,14 +111,16 @@ export default class Chat {
         $.each(data, function (index, data) {
             switch (index) {
                 case 'dialogs':
-                    data.forEach(function (item) {
+                    data.forEach(function (item, i) {
                         if (item.peer.channel_id) {
-                            list['dialogs'][item.peer.channel_id] = item;
+                            item.id = item.peer.channel_id;
                         } else if (item.peer.user_id) {
-                            list['dialogs'][item.peer.user_id] = item;
+                            item.id = item.peer.user_id;
                         } else if (item.peer.chat_id) {
-                            list['dialogs'][item.peer.chat_id] = item;
+                            item.id = item.peer.chat_id;
                         }
+
+                        list['dialogs'][i] = item;
                     });
                     break;
                 case 'messages':
@@ -195,13 +183,11 @@ export default class Chat {
 
         data.forEach(function (index) {
             if (self.photos[index] !== undefined) {
-                let avatarExists = false;
                 photo = self.photos[index];
 
                 if (photo) {
                     self.telegram.getAvatar(photo, function (res) {
                         if (res) {
-                            avatarExists = true;
                             photo = 'data:image/jpeg;base64,' + toBase64(res.bytes);
                             self.photos[index] = photo;
 
@@ -216,14 +202,6 @@ export default class Chat {
 
                     $('.contacts-list li[data-id="' + index + '"] .avatar-container').css('background-color', self.getAvatarColor(name)).append(avatarChar);
                 }
-
-                // if (!avatarExists) {
-                //     avatarChar = $('.contacts-list li[data-id="' + index + '"]').data('name')[0];
-                //
-                //     $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<span>', {
-                //         html: avatarChar
-                //     })).addClass('background-char-g');
-                // }
             }
         });
     }
@@ -307,23 +285,61 @@ export default class Chat {
         });
     }
 
-    loadCurrentUserData() {
+    loadCurrentUserData(app) {
         let self = this;
 
         this.telegram.getUserInfo(function (user) {
-            self.user = user;
+            if (user) {
+                self.user = user;
+            } else {
+                localStorage.removeItem('code');
+                app.setCookie('userHash', '');
+            }
         });
     }
 
     getUserName(user) {
         return user.first_name + ( (user.last_name) ? (' ' + user.last_name) : '');
     }
+
+    renderTopChatInfo(data, entityId) {
+        let title = '',
+            status = '';
+
+        if (data.length) {
+            title = this.getUserName(data);
+
+            if (data.status) {
+                if (data.status.expires) {
+                    status = 'Online';
+                } else if (data.status.was_online) {
+                    status = 'last seen ' + this.getChatDate(data.status.was_online) + ' ago';
+                }
+            }
+        } else {
+            title = this.chats[entityId].title
+        }
+
+        $('.chat-window .info .name').html(title);
+        $('.chat-window .info .status').html(status);
+
+        if (this.photos[entityId]) {
+            $('.top-bar .avatar-container').html($('<img>', {
+                src: this.photos[entityId]
+            }));
+        } else {
+            let avatarChar = this.getAvatarCode(title);
+
+            $('.top-bar .avatar-container').css('background-color', this.getAvatarColor(this.chats[entityId].title)).html(avatarChar);
+        }
+    }
 }
 
 $(document).ready(function () {
     let chat = new Chat();
+    let app = new App();
 
-    chat.loadCurrentUserData();
+    chat.loadCurrentUserData(app);
     chat.loadDialogs();
     chat.initSearch();
 });
