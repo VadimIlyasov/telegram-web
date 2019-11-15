@@ -333,16 +333,19 @@ export default class Chat {
 
     renderTopChatInfo(data, entityId) {
         let title = '',
-            status = '';
+            status = '',
+            statusColor = 'grey';
 
-        if (data.length) {
+        if (Object.keys(data).length) {
             title = this.getUserName(data);
 
             if (data.status) {
+                console.log(data.status);
                 if (data.status.expires) {
                     status = 'Online';
+                    statusColor = '#3390ec';
                 } else if (data.status.was_online) {
-                    status = 'last seen ' + this.getChatDate(data.status.was_online) + ' ago';
+                    status = 'last seen ' + this.getChatTopBarDate(data.status.was_online);
                 }
             }
         } else {
@@ -350,7 +353,7 @@ export default class Chat {
         }
 
         $('.chat-window .info .name').html(title);
-        $('.chat-window .info .status').html(status);
+        $('.chat-window .info .status').html(status).css('color', statusColor);
 
         if (this.photos[entityId]) {
             $('.top-bar .avatar-container').html($('<img>', {
@@ -362,6 +365,42 @@ export default class Chat {
             $('.top-bar .avatar-container').css('background-color', this.getAvatarColor(this.chats[entityId].title)).html(avatarChar);
         }
     }
+
+    getChatTopBarDate(timestamp) {
+        let today = new Date();
+        let chatDate = new Date(timestamp * 1000);
+
+        // Display day of week
+        let diffTime =  Math.floor((today.getTime() - chatDate.getTime()) / 60000);
+        let diffHours = Math.floor(diffTime / 60);
+        let diffDays =  Math.floor(diffTime / (1000 * 3600 * 24));
+
+        if (diffTime < 1) {
+            return 'just now';
+        } else if (diffTime < 60) {
+            if (diffTime == 1) {
+                return diffTime + ' minute ago';
+            } else {
+                return diffTime + ' minutes ago';
+            }
+        } else if (diffHours < 24) {
+            if (diffHours == 1) {
+                return diffHours + ' hour ago';
+            } else {
+                return diffHours + ' hours ago';
+            }
+        } else if (diffDays < 2) {
+            return 'yesterday at ' + chatDate.getUTCHours().pad() + ':' + chatDate.getMinutes().pad();
+        }
+
+        return chatDate.getDate() + '.' + (chatDate.getMonth() + 1) + chatDate.getFullYear().toString().substr(-2);
+    }
+
+    initNotifications() {
+        this.telegram.subscribe(function (data) {
+            console.log(data);
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -372,4 +411,5 @@ $(document).ready(function () {
     chat.loadDialogs();
     chat.initSearch();
     chat.initMessagesWindow();
+    chat.initNotifications();
 });
