@@ -358,7 +358,8 @@ select {
 	border-radius: 10px;
 }
 
-.contacts-list li > .avatar {
+.contacts-list li > .avatar,
+.avatar-container {
 	width: 54px;
 	position: relative;
 	text-align: center;
@@ -377,9 +378,6 @@ select {
 	bottom: 3px;
 	right: 3px;
 }
-
-
-
 
 .contacts-list li > .info {
 	flex: 2 0px; 
@@ -444,7 +442,6 @@ select {
 }
 
 .chat-window .top-bar .status {
-	color: #3390ec;
 	font-size: 12px;
 }
 

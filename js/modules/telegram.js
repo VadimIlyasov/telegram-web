@@ -65,9 +65,9 @@ export default class TelegramAPI {
         // app.setCookie('userHash', CryptoJS.SHA256(code).toString());
         // callback();
         telegramApi.signIn(phoneNumber, window.phone_code_hash, code).then(function() {
-            delete window.phone_code_hash;
-        
             app.setCookie('userHash', CryptoJS.SHA256(code).toString());
+            delete window.phone_code_hash;
+
             if (typeof callback === 'function') {
                 callback();
             }
