@@ -191,7 +191,7 @@
         </div>
         <div class="info">
             <p class="name crop"><%= name %></p>
-            <p class="last-message crop"><%= lastMessage %></p>
+            <p class="last-message crop"><%= _.escape(lastMessage) %></p>
             <p class="timestamp"><%= time %></p>
             <% if (counter) { %>
                 <p class="messages-counter"><%= counter %></p>
@@ -205,7 +205,7 @@
     <div class="message <%= message_type %> droplet" data-id="<%= id %>">
         <div class="message__text">
             <div class="message__text__content">
-                <%= message %>
+                <%= _.escape(message) %>
                 <div class="message__time"><%= time %></div>
             </div>
         </div>
