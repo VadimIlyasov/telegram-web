@@ -3,7 +3,9 @@ import TelegramAPI from "./telegram.js";
 export default class Chat {
     constructor() {
         this.users = [];
+        this.chats = [];
         this.dialogs = [];
+        this.messages = [];
         this.user = {};
         this.photos = [];
         this.telegram = new TelegramAPI();
@@ -72,21 +74,36 @@ export default class Chat {
                     type = $(this).data('type'),
                     accessHash = $(this).data('access-hash');
 
+                switch (type) {
+                    case 'user':
+                        self.telegram.getUserById(id, accessHash, function (info) {
+                            let title = self.getUserName(info),
+                                status = '';
+
+                            if (info.status.expires) {
+                                status = 'Online';
+                            }
+
+                            $('.chat-window .info .name').html(title);
+                            $('.chat-window .info .status').html(status);
+                            $('.top-bar .avatar-container').html($('<img>', {
+                                src: self.photos[id]
+                            }));
+                        });
+
+                        break;
+                    case 'channel':
+                    case 'chat':
+                        $('.chat-window .info .name').html(self.chats[id].title);
+                        $('.chat-window .info .status').html('');
+                        $('.top-bar .avatar-container').append($('<img>', {
+                            src: this.photos[id]
+                        }));
+
+                        break;
+                }
+
                 self.loadDialogMessages(id, type, accessHash, 50);
-
-                self.telegram.getUserById(id, accessHash, function (info) {
-                    console.log(info);
-                    let title = self.getUserName(info) || info.title;
-                    let status = '';
-
-                    $('.chat-window .info .name').html(title);
-
-                    if (info.status.expires) {
-                        status = 'Online';
-                    }
-
-                    $('.chat-window .info .status').html(status);
-                });
             });
 
             self.loadAvatars();
@@ -123,6 +140,11 @@ export default class Chat {
                     break;
             }
         });
+
+        this.users = list.users;
+        this.dialogs = list.dialogs;
+        this.chats = list.chats;
+        this.messages = list.messages;
 
         return list;
     }
@@ -183,6 +205,8 @@ export default class Chat {
                     self.telegram.getAvatar(photo, function (res) {
                         if (res) {
                             avatarExists = true;
+                            photo = 'data:image/jpeg;base64,' + toBase64(res.bytes);
+                            self.photos[index] = photo;
 
                             $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<img>', {
                                 src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
