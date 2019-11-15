@@ -21,7 +21,7 @@ export default class Chat {
             let contactData = [];
 
             $.each(list.dialogs, function (id, el) {
-                let date = new Date(list.messages[el.top_message].date * 1000);
+                // let date = new Date(list.messages[el.top_message].date * 1000);
                 let message = list.messages[el.top_message].message;
 
                 if (el.peer.user_id) {
@@ -36,7 +36,7 @@ export default class Chat {
                         contactsHTML += contactTpl({
                             name: contactData.first_name + ( (contactData.last_name) ? (' '+contactData.last_name):''),
                             lastMessage: message,
-                            time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
+                            time: self.getChatDate(list.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
                             id: id,
                             type: contactData._,
@@ -55,7 +55,7 @@ export default class Chat {
                         contactsHTML += contactTpl({
                             name: contactData.title,
                             lastMessage: message,
-                            time: date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
+                            time: self.getChatDate(list.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
                             id: id,
                             type: contactData._,
@@ -136,13 +136,6 @@ export default class Chat {
                     from: message.from_id,
                     time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
                 }));
-
-                /**
-                 * message.from_id - Sender ID
-                 * message.date - Date
-                 * message.media - If message is Document or Photo
-                 * message.message - Message text
-                 */
             });
         });
     }
@@ -214,6 +207,32 @@ export default class Chat {
         }
 
         return colors[sum % colors.length];
+    }
+
+    getChatDate(timestamp) {
+        let weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        let today = new Date();
+        let currentDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+
+        let chatDate = new Date(timestamp * 1000);
+        let chatDateFormatted = chatDate.getFullYear()+'-'+(chatDate.getMonth()+1)+'-'+chatDate.getDate();
+
+        // Display time only
+        if (currentDate == chatDateFormatted) {
+            return chatDate.getUTCHours().pad() + ':' + chatDate.getMinutes().pad();
+        }
+
+        // Display day of week
+        let diffTime = today.getTime() - chatDate.getTime();
+        let diffDays = diffTime / (1000 * 3600 * 24); 
+
+        if (diffDays < 7) {
+            return weekDays[chatDate.getDay()];
+        }
+
+        // Display date
+        return (chatDate.getMonth()+1)+'/'+chatDate.getDate() + '/' + chatDate.getFullYear();
     }
 }
 
