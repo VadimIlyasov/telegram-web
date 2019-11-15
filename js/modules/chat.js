@@ -232,7 +232,7 @@ export default class Chat {
         }
 
         // Display date
-        return (chatDate.getMonth()+1)+'/'+chatDate.getDate() + '/' + chatDate.getFullYear();
+        return (chatDate.getMonth()+1)+'/'+chatDate.getDate() + '/' + chatDate.getFullYear().toString().substr(-2);
     }
 }
 
