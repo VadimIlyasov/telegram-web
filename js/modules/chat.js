@@ -350,12 +350,12 @@ export default class Chat {
             title = this.getUserName(data);
 
             if (data.status) {
-                $('.chat-window .info .status').data('user-id', entityId);
+                $('.chat-window .info .status').data('user', entityId);
                 this.setChatTopBarStatus(data.status._, data.status.was_online, entityId);
             }
         } else {
             title = this.chats[entityId].title;
-            $('.chat-window .info .status').data('user-id', '');
+            $('.chat-window .info .status').data('user', '').html('');
         }
 
         $('.chat-window .info .name').html(title);
@@ -372,12 +372,11 @@ export default class Chat {
     }
 
     setChatTopBarStatus(statusType, timestamp, userId) {
-        let barStatusUserId = $('.chat-window .info .status').data('user-id');
+        let barStatusUserId = $('.chat-window .info .status').data('user');
 
         if (barStatusUserId && barStatusUserId === userId) {
             let statusColor = 'black';
 
-            console.log(barStatusUserId);
             if (statusType === 'userStatusOnline') {
                 status = 'Online';
                 statusColor = '#3390ec';
@@ -423,7 +422,7 @@ export default class Chat {
         let self = this;
 
         self.telegram.subscribe(function (data) {
-            console.log(data);
+            // console.log(data);
 
             switch (data._) {
                 case 'updateShort':
@@ -464,7 +463,6 @@ export default class Chat {
                             });
                         }
                     }
-                    
                     
                     break;
             }
@@ -507,6 +505,7 @@ export default class Chat {
     }
 
     updateContactStatus(statusType, timestamp, userId) {
+        
         if (statusType === 'userStatusOnline') {
             $('.contacts-list li[data-id=' + userId + '] .avatar').append($('<div>', {'class': 'online'}));
         } else {
