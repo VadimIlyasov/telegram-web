@@ -107,6 +107,7 @@ export default class Chat {
             });
 
             self.loadAvatars();
+            // $contactsList.find('li').first().click();
         });
     }
 
@@ -187,6 +188,7 @@ export default class Chat {
         let photo = {};
         let avatarChar = '';
         let self = this;
+        let called = false;
 
         $('.contacts-list li').each(function () {
             data.push($(this).data('id'));
@@ -205,6 +207,11 @@ export default class Chat {
                             $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<img>', {
                                 src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
                             }));
+
+                            if (!called) {
+                                $('.contacts-list').find('li').first().click();
+                                called = true;
+                            }
                         }
                     });
                 } else {
@@ -337,10 +344,12 @@ export default class Chat {
             title = this.getUserName(data);
 
             if (data.status) {
-               this.setChatTopBarStatus(data.status._, data.status.was_online, entityId);
+                $('.chat-window .info .status').data('user-id', entityId);
+                this.setChatTopBarStatus(data.status._, data.status.was_online, entityId);
             }
         } else {
-            title = this.chats[entityId].title
+            title = this.chats[entityId].title;
+            $('.chat-window .info .status').data('user-id', '');
         }
 
         $('.chat-window .info .name').html(title);
@@ -352,26 +361,25 @@ export default class Chat {
         } else {
             let avatarChar = this.getAvatarCode(title);
 
-            $('.top-bar .avatar-container').css('background-color', this.getAvatarColor(this.chats[entityId].title)).html(avatarChar);
+            $('.top-bar .avatar-container').css('background-color', this.getAvatarColor(title)).html(avatarChar);
         }
     }
 
     setChatTopBarStatus(statusType, timestamp, userId) {
-        let statusColor = 'black';
         let barStatusUserId = $('.chat-window .info .status').data('user-id');
 
-        console.log(statusType);
-        if (statusType === 'userStatusOnline') {
-            status = 'Online';
-            statusColor = '#3390ec';
-        } else if (statusType === 'userStatusOffline') {
-            status = 'last seen ' + this.getChatTopBarDate(timestamp);
-        }
-
         if (barStatusUserId && barStatusUserId === userId) {
+            let statusColor = 'black';
+
+            console.log(barStatusUserId);
+            if (statusType === 'userStatusOnline') {
+                status = 'Online';
+                statusColor = '#3390ec';
+            } else if (statusType === 'userStatusOffline') {
+                status = 'last seen ' + this.getChatTopBarDate(timestamp);
+            }
+
             $('.chat-window .info .status').html(status).css('color', statusColor);
-        } else {
-            $('.chat-window .info .status').data('user-id', userId).html(status).css('color', statusColor);
         }
     }
 
@@ -416,6 +424,7 @@ export default class Chat {
                     if (data.update._ === 'updateUserStatus') {
                         // updateUserStatus in top bar
                         self.setChatTopBarStatus(data.update.status._, data.update.status.was_online, data.update.user_id);
+                        self.updateContactStatus(data.update.status._, data.update.status.was_online, data.update.user_id);
                     }
                     break;
                 case 'updateShortMessage':
@@ -477,22 +486,10 @@ export default class Chat {
     }
 
     updateContactStatus(statusType, timestamp, userId) {
-        // <div class="online"></div>
-        let statusColor = 'black';
-        let barStatusUserId = $('.chat-window .info .status').data('user-id');
-
-        console.log(statusType);
         if (statusType === 'userStatusOnline') {
-            status = 'Online';
-            statusColor = '#3390ec';
-        } else if (statusType === 'userStatusOffline') {
-            status = 'last seen ' + this.getChatTopBarDate(timestamp);
-        }
-
-        if (barStatusUserId && barStatusUserId === userId) {
-            $('.chat-window .info .status').html(status).css('color', statusColor);
+            $('.contacts-list li[data-id=' + userId + '] .avatar').append($('<div>', {'class': 'online'}));
         } else {
-            $('.chat-window .info .status').data('user-id', userId).html(status).css('color', statusColor);
+            $('.contacts-list li[data-id=' + userId + '] .avatar .online').remove();
         }
     }
 }
