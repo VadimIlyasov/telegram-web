@@ -279,6 +279,12 @@ select {
 	background-size: 100%;
 }
 
+.link-icon.smile {
+	background: url('../img/icons/smile_3x.png') no-repeat;
+	width: 19px;
+	height: 19px;
+	background-size: 100%;
+}
 
 
 
@@ -469,6 +475,23 @@ select {
     border: 1px solid #dadce0;
     border-radius: 15px;
     width: 500px;
+    position: relative;
+}
+
+
+.smiles-list {
+	width: 300px;
+	height: 200px;
+	position: absolute;
+	background: #fff;
+	padding: 10px;
+	bottom: 50px;
+	overflow: auto;
+	z-index: 2;
+}
+
+.smiles-list a {
+	text-decoration: none;
 }
 
 
@@ -505,8 +528,6 @@ select {
 }
 
 .message {
-
-
   align-self: flex-start;
   display: flex;
   align-items: center;

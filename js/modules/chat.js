@@ -604,40 +604,13 @@ export default class Chat {
                          access_hash: self.accessHash
                     };
                 }
-
                 self.telegram.sendMessage(peer, $(this).val(), function(updates) {
-
                     $('.message-input-box input').val('');
                     console.log(updates);
 
                     if (updates._ == 'updateShortSentMessage') {
                         self.telegram.getMessages([updates.id], function (messages) {
-//                             console.log(messages);
-//                             // console.log(messages.messages[0]);
-// console.log(messages.chats[0]._);
                             if (messages.chats.length) {
-                                // if (messages.chats[0]._ == 'channel') {
-                                //     // self.addNewMessage('channel', messages.chats[0].id, messages.messages[0]);
-
-                                //     let channelId = 0;
-                                //     console.log('here');
-                                //     for (let i = 0; i<messages.updates.length; i++) {
-                                //         console.log('here');
-                                //         if (messages.updates[i].channel_id) {
-                                //             channelId = data.updates[i].channel_id;
-                                //         }
-                                //         if (messages.updates[i].message) {
-                                //             console.log('here');
-                                //             console.log(messages.updates[i].message);
-                                //             // message from channel
-                                //             self.telegram.getChannelMessages({channel_id: messages.chats[0].id, access_hash: messages.chats[0].access_hash, _:'inputChannel'}, [messages.updates[i].message.id], function(messages) {
-                                //                 self.addNewMessage('channel', channelId, messages.messages[0]);
-                                //             });
-                                //         }
-                                //     }
-
-
-                                // } else {
                                     // Chat message
                                     self.addNewMessage('chat', messages.chats[0].id, messages.messages[0]);
                                 // }
@@ -648,64 +621,42 @@ export default class Chat {
 
                             
                         });
-
-
-                        // self.addNewMessage('chat', data.chat_id, messages.messages[0]);
-                } else if (updates._ == 'updates') {
-                    let channelId = 0;
-                    
-                    for (let i = 0; i<updates.updates.length; i++) {
-                        if (updates.updates[i].channel_id) {
-                            channelId = updates.updates[i].channel_id;
-                        }
-                        if (updates.updates[i].message) {
-                            // message from channel
-                            self.telegram.getChannelMessages({channel_id: channelId, access_hash: updates.chats[0].access_hash, _:'inputChannel'}, [updates.updates[i].message.id], function(messages) {
-                                // console.log(messages.messages[0]);
-
-                                self.addNewMessage('channel', channelId, messages.messages[0]);
-                            });
-                        }
-                    }
-                    // let channelId = 0;
-
-                    // for (let i = 0; i<messages.updates.length; i++) {
-                    //     console.log('here');
-                    //     if (messages.updates[i].channel_id) {
-                    //         channelId = data.updates[i].channel_id;
-                    //     }
-                    //     if (messages.updates[i].message) {
-                    //         console.log('here');
-                    //         console.log(messages.updates[i].message);
-                    //         // message from channel
-                    //         self.telegram.getChannelMessages({channel_id: messages.chats[0].id, access_hash: messages.chats[0].access_hash, _:'inputChannel'}, [messages.updates[i].message.id], function(messages) {
-                    //             self.addNewMessage('channel', channelId, messages.messages[0]);
-                    //         });
-                    //     }
-                    // }
-                }
-
+                    } else if (updates._ == 'updates') {
+                        let channelId = 0;
                         
-                    
-            });
+                        for (let i = 0; i<updates.updates.length; i++) {
+                            if (updates.updates[i].channel_id) {
+                                channelId = updates.updates[i].channel_id;
+                            }
+                            if (updates.updates[i].message) {
+                                // message from channel
+                                self.telegram.getChannelMessages({channel_id: channelId, access_hash: updates.chats[0].access_hash, _:'inputChannel'}, [updates.updates[i].message.id], function(messages) {
+                                    // console.log(messages.messages[0]);
 
-                // telegramApi.sendMessage(self.id, $(this).val()).then(function(updates) {
-                //     $('.message-input-box input').val('');
-                //     console.log(updates);
-
-                //     if (updates._ == 'updateShortSentMessage') {
-                //         self.telegram.getMessages([updates.id], function (messages) {
-                //             console.log(messages.messages[0]);
-                //             self.addNewMessage('user', messages.messages[0].to_id.user_id, messages.messages[0]);
-                //         });
-                //     }
-                    
-                // });
+                                    self.addNewMessage('channel', channelId, messages.messages[0]);
+                                });
+                            }
+                        }   
+                    }
+                });
             } else {
                 // send "typing" message
             }
         });
             
+    }
+
+    initSmiles() {
+        $('.display-smiles').click(function() {
+            $('.smiles-list').toggle();
+            return false;
+        });
+
+        $('.smiles-list a').click(function() {
+            $('.message-input-box input').val($('.message-input-box input').val() + $(this).text());
+            $('.smiles-list').hide();
+            return false;
+        });
     }
 }
 
@@ -719,6 +670,7 @@ $(document).ready(function () {
     chat.initMessagesWindow();
     chat.initNotifications();
     chat.initMessagesInput();
+    chat.initSmiles();
 
     // Update minutes and hours
     setInterval(chat.regularStatusUpdate, 60000, chat);
