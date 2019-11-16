@@ -370,6 +370,8 @@ export default class Chat {
         let barStatusUserId = $('.chat-window .info .status').data('user');
         let status = '';
 
+        if (this.type != 'user') return;
+
         if (barStatusUserId && barStatusUserId === userId) {
             let statusColor = 'black';
 
@@ -382,8 +384,6 @@ export default class Chat {
                 $('.chat-window .info .status').data('timestamp', timestamp);
                 status = 'last seen ' + this.getChatTopBarDate(timestamp);
             }
-
-            console.log(status, timestamp);
 
             $('.chat-window .info .status').html(status).css('color', statusColor);
         }
@@ -495,8 +495,6 @@ export default class Chat {
         // Update last message in contacts list
         $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+'] .last-message').html(_.escape(message.message));
         $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+']').detach().prependTo('.contacts-list');
-
-
     }
 
     addCounter(dialogType, dialogID) {
