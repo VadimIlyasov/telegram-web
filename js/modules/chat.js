@@ -488,7 +488,7 @@ export default class Chat {
                     break;
                 case 'updates':
                     let channelId = 0;
-
+                    
                     for (let i = 0; i<data.updates.length; i++) {
                         if (data.updates[i].channel_id) {
                             channelId = data.updates[i].channel_id;
@@ -496,6 +496,7 @@ export default class Chat {
                         if (data.updates[i].message) {
                             // message from channel
                             self.telegram.getChannelMessages({channel_id: channelId, access_hash: data.chats[0].access_hash, _:'inputChannel'}, [data.updates[i].message.id], function(messages) {
+
                                 self.addNewMessage('channel', channelId, messages.messages[0]);
                             });
                         }
@@ -590,7 +591,7 @@ export default class Chat {
         let $contactsList = $('aside.contacts');
 
         // On scroll to top
-        $contactsList.scroll(function() {
+        $contactsList.scroll(function () {
             let scrollTop = $(this).scrollTop(),
                 scrollHeight = $(this)[0].scrollHeight,
                 height = $(this).height();
@@ -605,6 +606,87 @@ export default class Chat {
             }
         });
     }
+
+    initMessagesInput() {
+        let self = this;
+
+        $('.message-input-box input').keypress(function(e) {
+            if (e.keyCode == 13) {
+
+                let peer = {};
+
+                if (self.type == 'user') {
+                    peer = {
+                         _: 'inputPeerUser',
+                         user_id: self.id,
+                         access_hash: self.accessHash
+                    };
+                } else if (self.type == 'chat') {
+                    peer = {
+                         _: 'inputPeerChat',
+                         chat_id: self.id
+                    };
+                } else if (self.type == 'channel') {
+                    peer = {
+                         _: 'inputPeerChannel',
+                         channel_id: self.id,
+                         access_hash: self.accessHash
+                    };
+                }
+                self.telegram.sendMessage(peer, $(this).val(), function(updates) {
+                    $('.message-input-box input').val('');
+                    console.log(updates);
+
+                    if (updates._ == 'updateShortSentMessage') {
+                        self.telegram.getMessages([updates.id], function (messages) {
+                            if (messages.chats.length) {
+                                    // Chat message
+                                    self.addNewMessage('chat', messages.chats[0].id, messages.messages[0]);
+                                // }
+                            } else {
+                                // User messages
+                                self.addNewMessage('user', messages.messages[0].to_id.user_id, messages.messages[0]);
+                            }
+
+                            
+                        });
+                    } else if (updates._ == 'updates') {
+                        let channelId = 0;
+                        
+                        for (let i = 0; i<updates.updates.length; i++) {
+                            if (updates.updates[i].channel_id) {
+                                channelId = updates.updates[i].channel_id;
+                            }
+                            if (updates.updates[i].message) {
+                                // message from channel
+                                self.telegram.getChannelMessages({channel_id: channelId, access_hash: updates.chats[0].access_hash, _:'inputChannel'}, [updates.updates[i].message.id], function(messages) {
+                                    // console.log(messages.messages[0]);
+
+                                    self.addNewMessage('channel', channelId, messages.messages[0]);
+                                });
+                            }
+                        }   
+                    }
+                });
+            } else {
+                // send "typing" message
+            }
+        });
+            
+    }
+
+    initSmiles() {
+        $('.display-smiles').click(function() {
+            $('.smiles-list').toggle();
+            return false;
+        });
+
+        $('.smiles-list a').click(function() {
+            $('.message-input-box input').val($('.message-input-box input').val() + $(this).text());
+            $('.smiles-list').hide();
+            return false;
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -616,6 +698,8 @@ $(document).ready(function () {
     chat.initSearch();
     chat.initMessagesWindow();
     chat.initNotifications();
+    chat.initMessagesInput();
+    chat.initSmiles();
     // chat.initContactsListScrollListener();
 
     // Update minutes and hours

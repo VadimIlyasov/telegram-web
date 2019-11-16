@@ -279,6 +279,12 @@ select {
 	background-size: 100%;
 }
 
+.link-icon.smile {
+	background: url('../img/icons/smile_3x.png') no-repeat;
+	width: 19px;
+	height: 19px;
+	background-size: 100%;
+}
 
 
 
@@ -327,7 +333,7 @@ select {
 
 .wrapper > .aside { flex: 1 0 0; }
 
-.wrapper > .chat-window { flex: 2 0px; background: #e6ebee; height: 100%; overflow: auto; position: relative; padding-top: 100px; }
+.wrapper > .chat-window { flex: 2 0px; background: #e6ebee; height: 100%; overflow: auto; position: relative; padding: 100px 0; }
 .wrapper > .contacts { order: 1; background: #fff; border: 1px solid #dadce0; height: 100%; overflow: auto; position: relative; padding-top: 65px; border-top: 0;}
 .wrapper > .chat-window    { order: 2; }
 .wrapper > .info { order: 3; }
@@ -446,6 +452,49 @@ select {
 }
 
 
+
+/* Bottom bar */
+
+.chat-window .bottom-bar {
+	width: 100%;
+	background: #fff;
+	padding: 10px 20px;
+	z-index: 100;
+	position: fixed;
+	bottom: 0;
+	background: #e6ebee;
+}
+
+
+.chat-window .bottom-bar .message-input-box input {
+    line-height: 32px;
+    font-size: 16px;
+    font-weight: normal;
+    padding: 5px 15px;
+    outline: none;
+    border: 1px solid #dadce0;
+    border-radius: 15px;
+    width: 500px;
+    position: relative;
+}
+
+
+.smiles-list {
+	width: 300px;
+	height: 200px;
+	position: absolute;
+	background: #fff;
+	padding: 10px;
+	bottom: 50px;
+	overflow: auto;
+	z-index: 2;
+}
+
+.smiles-list a {
+	text-decoration: none;
+}
+
+
 /* Messages window */
 
 .messages-window {
@@ -479,8 +528,6 @@ select {
 }
 
 .message {
-
-
   align-self: flex-start;
   display: flex;
   align-items: center;
