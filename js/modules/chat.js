@@ -216,6 +216,8 @@ export default class Chat {
                     time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
                 }));
             });
+
+            $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
         });
     }
 
@@ -522,9 +524,12 @@ export default class Chat {
                 id: message.id,
                 message_type: (message.from_id === self.user.id) ? 'my-message' : '',
                 message: message.message,
+                content: '',
                 from: message.from_id,
                 time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
             }));
+
+            $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
         }
 
         // Update last message in contacts list
