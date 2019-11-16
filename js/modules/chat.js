@@ -172,11 +172,6 @@ export default class Chat {
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
 
-                if (message.media) {
-                    console.log(message.media.photo.sizes[1].location);
-                    self.telegram.getFile(message.media.photo.sizes[1].location);
-                }
-
 
                 $('.messages-list').prepend(messageTpl({
                     id: message.id,
@@ -373,16 +368,22 @@ export default class Chat {
 
     setChatTopBarStatus(statusType, timestamp, userId) {
         let barStatusUserId = $('.chat-window .info .status').data('user');
+        let status = '';
 
         if (barStatusUserId && barStatusUserId === userId) {
             let statusColor = 'black';
 
             if (statusType === 'userStatusOnline') {
                 status = 'Online';
+                $('.chat-window .info .status').data('status', 'online');
                 statusColor = '#3390ec';
             } else if (statusType === 'userStatusOffline') {
+                $('.chat-window .info .status').data('status', 'offline');
+                $('.chat-window .info .status').data('timestamp', timestamp);
                 status = 'last seen ' + this.getChatTopBarDate(timestamp);
             }
+
+            console.log(status, timestamp);
 
             $('.chat-window .info .status').html(status).css('color', statusColor);
         }
@@ -493,6 +494,9 @@ export default class Chat {
 
         // Update last message in contacts list
         $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+'] .last-message').html(_.escape(message.message));
+        $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+']').detach().prependTo('.contacts-list');
+
+
     }
 
     addCounter(dialogType, dialogID) {
@@ -512,6 +516,17 @@ export default class Chat {
             $('.contacts-list li[data-id=' + userId + '] .avatar .online').remove();
         }
     }
+
+    regularStatusUpdate(chat) {
+        let status = $('.chat-window .info .status').data('status');
+
+        if (status == 'offline') {
+            let timestamp = $('.chat-window .info .status').data('timestamp');
+            let statusText = 'last seen ' + chat.getChatTopBarDate(timestamp);
+
+            $('.chat-window .info .status').html(statusText).css('color', 'black');
+        }
+    }
 }
 
 $(document).ready(function () {
@@ -523,4 +538,7 @@ $(document).ready(function () {
     chat.initSearch();
     chat.initMessagesWindow();
     chat.initNotifications();
+
+    // Update minutes and hours
+    setInterval(chat.regularStatusUpdate, 60000, chat);
 });
