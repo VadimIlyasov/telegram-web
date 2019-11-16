@@ -167,25 +167,54 @@ export default class Chat {
 
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
+                let content = '';
 
+
+                console.log(message);
                 if (message.media && message.media._ === 'messageMediaPhoto') {
                     self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
                         if (res._ && res._ === 'upload.file') {
-                            $('.message[data-id="' + message.id + '"]').find('.message__text__content').append($('<img>', {
-                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
-                            }))
+                            $('.message[data-id="' + message.id + '"]').find('.message__text__content').prepend($('<img>', {
+                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
+                            }));
                         }
                     });
+
+                    message.message = message.media.caption;
+                }
+
+                if (message.media && message.media._ === 'messageMediaDocument') {
+                    if (message.media.document.thumb._ == 'photoSizeEmpty') {
+
+                        content = '<p>'+message.media.document.attributes[0].file_name+'</p>'
+                            +'<p>'+self.fileSizeFormat(message.media.document.size)+'</p>'
+                            +'<p><a href="#" class="dialog-document-download">Download</a></p>';
+
+                        // special case for "application/pdf"
+                    } else {
+                        self.telegram.getFile(message.media.document.thumb.location, function (res) {
+                            if (res._ && res._ === 'upload.file') {
+                                $('.message[data-id="' + message.id + '"]').find('.message__text__content').prepend($('<img>', {
+                                    src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
+                                }))
+                            }
+                        });
+                    }
+
+                    message.message = message.media.caption;
                 }
 
                 $('.messages-list').prepend(messageTpl({
                     id: message.id,
                     message_type: (message.from_id === self.user.id) ? 'my-message' : '',
+                    content: content,
                     message: message.message,
                     from: message.from_id,
                     time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
                 }));
             });
+
+            $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
         });
     }
 
@@ -486,9 +515,12 @@ export default class Chat {
                 id: message.id,
                 message_type: (message.from_id === self.user.id) ? 'my-message' : '',
                 message: message.message,
+                content: '',
                 from: message.from_id,
                 time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
             }));
+
+            $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
         }
 
         // Update last message in contacts list
@@ -529,6 +561,20 @@ export default class Chat {
         let avatarChar = this.getAvatarCode(name);
 
         $block.css('background-color', this.getAvatarColor(name)).append(avatarChar);
+    }
+
+    fileSizeFormat(bytes) {
+        let size = bytes;
+
+        if (size < 1000) {
+            return size + ' bytes';
+        } else if (size < 1000000) {
+            return Math.floor(size/1000)+'K';
+        } else if (size < 1000000000) {
+            return Math.floor(size/1000000)+'M';
+        } else if (size < 1000000000000) {
+            return Math.floor(size/1000000000)+'G';
+        }
     }
 }
 
