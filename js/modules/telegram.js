@@ -228,4 +228,20 @@ export default class TelegramAPI {
     subscribe(callback) {
         telegramApi.subscribe('katanagram', callback);
     }
+
+    sendMessage(peer, message, callback) {
+        telegramApi.invokeApi('messages.sendMessage', {
+            peer: peer,
+            message: message,
+            random_id: [this.randomID(),this.randomID()]
+        }).then(function (data) {
+            callback(data);
+        });
+    }
+
+    randomID() {
+        let min = 0;
+        let max = 500000000000;//Number.MAX_VALUE;
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
 }
