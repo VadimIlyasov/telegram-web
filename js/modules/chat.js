@@ -107,7 +107,6 @@ export default class Chat {
             });
 
             self.loadAvatars();
-            // $contactsList.find('li').first().click();
         });
     }
 
@@ -156,8 +155,6 @@ export default class Chat {
         let messageTpl = _.template($('#message-tpl').html());
         let self = this;
 
-        // $('.messages-list').empty();
-
         num = (num || 50);
 
         this.telegram.getHistory({
@@ -174,7 +171,6 @@ export default class Chat {
                 if (message.media && message.media._ === 'messageMediaPhoto') {
                     self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
                         if (res._ && res._ === 'upload.file') {
-                            console.log(res);
                             $('.message[data-id="' + message.id + '"]').find('.message__text__content').append($('<img>', {
                                 src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
                             }))
@@ -205,6 +201,8 @@ export default class Chat {
         });
 
         data.forEach(function (index) {
+            let name = $('.contacts-list li[data-id="' + index + '"]').data('name');
+
             if (self.photos[index] !== undefined) {
                 photo = self.photos[index];
 
@@ -223,12 +221,11 @@ export default class Chat {
                                 called = true;
                             }
                         }
+                    }, function () {
+                        self.renderCharAvatar(name, $('.contacts-list li[data-id="' + index + '"] .avatar-container'));
                     });
                 } else {
-                    let name = $('.contacts-list li[data-id="' + index + '"]').data('name');
-                    avatarChar = self.getAvatarCode(name);
-
-                    $('.contacts-list li[data-id="' + index + '"] .avatar-container').css('background-color', self.getAvatarColor(name)).append(avatarChar);
+                    self.renderCharAvatar(name, $('.contacts-list li[data-id="' + index + '"] .avatar-container'));
                 }
             }
         });
@@ -364,7 +361,7 @@ export default class Chat {
 
         $('.chat-window .info .name').html(title);
 
-        if (this.photos[entityId]) {
+        if (typeof this.photos[entityId] === 'string') {
             $('.top-bar .avatar-container').html($('<img>', {
                 src: this.photos[entityId]
             }));
@@ -432,8 +429,6 @@ export default class Chat {
         let self = this;
 
         self.telegram.subscribe(function (data) {
-            // console.log(data);
-
             switch (data._) {
                 case 'updateShort':
                     if (data.update._ === 'updateUserStatus') {
@@ -445,15 +440,12 @@ export default class Chat {
                 case 'updateShortMessage':
                     // message from user
                     self.telegram.getMessages([data.id], function (messages) {
-                        console.log(messages.messages[0]);
                         self.addNewMessage('user', data.user_id, messages.messages[0]);
                     });
                     break;
                 case 'updateShortChatMessage':
                     // message from chat
                     self.telegram.getMessages([data.id], function(messages) {
-                        console.log(messages.messages[0]);
-
                         self.addNewMessage('chat', data.chat_id, messages.messages[0]);
                     });
                     break;
@@ -467,8 +459,6 @@ export default class Chat {
                         if (data.updates[i].message) {
                             // message from channel
                             self.telegram.getChannelMessages({channel_id: channelId, access_hash: data.chats[0].access_hash, _:'inputChannel'}, [data.updates[i].message.id], function(messages) {
-                                console.log(messages.messages[0]);
-
                                 self.addNewMessage('channel', channelId, messages.messages[0]);
                             });
                         }
@@ -533,6 +523,12 @@ export default class Chat {
 
             $('.chat-window .info .status').html(statusText).css('color', 'black');
         }
+    }
+
+    renderCharAvatar(name, $block) {
+        let avatarChar = this.getAvatarCode(name);
+
+        $block.css('background-color', this.getAvatarColor(name)).append(avatarChar);
     }
 }
 
