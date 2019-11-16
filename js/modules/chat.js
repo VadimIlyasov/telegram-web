@@ -172,6 +172,12 @@ export default class Chat {
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
 
+                if (message.media) {
+                    console.log(message.media.photo.sizes[1].location);
+                    self.telegram.getFile(message.media.photo.sizes[1].location);
+                }
+
+
                 $('.messages-list').prepend(messageTpl({
                     id: message.id,
                     message_type: (message.from_id === self.user.id) ? 'my-message' : '',
