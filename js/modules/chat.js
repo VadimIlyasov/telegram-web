@@ -17,11 +17,19 @@ export default class Chat {
         this.type = '';
     }
 
-    loadDialogs(callback) {
+    loadDialogs(max_id, callback) {
         let contactTpl = _.template($('#contact-tpl').html());
         let self = this;
+        let params = {
+            offset_peer: {_: 'inputPeerEmpty'},
+            limit: 20
+        };
 
-        this.telegram.getDialogs(function (res) {
+        if (max_id) {
+            params.max_id = max_id;
+        }
+
+        this.telegram.getDialogs(params,function (res) {
             let list = self.prepareDialogsList(res);
 
             let $contactsList = $('.contacts-list');
@@ -576,6 +584,27 @@ export default class Chat {
             return Math.floor(size/1000000000)+'G';
         }
     }
+
+    initContactsListScrollListener() {
+        let self = this;
+        let $contactsList = $('aside.contacts');
+
+        // On scroll to top
+        $contactsList.scroll(function() {
+            let scrollTop = $(this).scrollTop(),
+                scrollHeight = $(this)[0].scrollHeight,
+                height = $(this).height();
+            let bottomReached = scrollHeight - (scrollTop + height + 100) < 0;
+
+            console.log(scrollHeight - (scrollTop + height + 100), 'REACHED');
+            if (bottomReached) {
+                if ($contactsList.find('li').length) {
+                    // get ID of the oldest contact
+                    self.loadDialogs($contactsList.find('li').last().data('id'));
+                }
+            }
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -587,6 +616,7 @@ $(document).ready(function () {
     chat.initSearch();
     chat.initMessagesWindow();
     chat.initNotifications();
+    // chat.initContactsListScrollListener();
 
     // Update minutes and hours
     setInterval(chat.regularStatusUpdate, 60000, chat);
