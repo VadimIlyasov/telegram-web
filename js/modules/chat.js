@@ -433,6 +433,26 @@ export default class Chat {
                         self.addNewMessage('chat', data.chat_id, messages.messages[0]);
                     });
                     break;
+                case 'updates':
+                    let channelId = 0;
+
+                    for (let i = 0; i<data.updates.length; i++) {
+                        if (data.updates[i].channel_id) {
+                            channelId = data.updates[i].channel_id;
+                        }
+                        if (data.updates[i].message) {
+                            // message from channel
+                            
+                            self.telegram.getChannelMessages({channel_id: channelId, access_hash: data.chats[0].access_hash, _:'inputChannel'}, [data.updates[i].message.id], function(messages) {
+                                console.log(messages.messages[0]);
+
+                                self.addNewMessage('channel', channelId, messages.messages[0]);
+                            });
+                        }
+                    }
+                    
+                    
+                    break;
             }
         });
     }
