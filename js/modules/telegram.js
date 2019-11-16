@@ -137,6 +137,7 @@ export default class TelegramAPI {
 
     getHistory(data, type, callback) {
         let params = {};
+        let filters = {};
 
         switch (type) {
             case 'user':
@@ -155,21 +156,31 @@ export default class TelegramAPI {
                 break;
         }
 
+        filters = {peer: params};
+
         if (data.max_id) {
-            params.max_id = data.max_id;
+            filters.max_id = data.max_id;
         }
 
         if (data.limit) {
-            params.limit = data.limit;
+            filters.limit = data.limit;
         }
 
-        telegramApi.invokeApi('messages.getHistory', {peer: params}).then(function (res) {
+        console.log(filters);
+        telegramApi.invokeApi('messages.getHistory', filters).then(function (res) {
+            console.log(res);
             callback(res);
         });
     }
 
     getMessages(ids, callback) {
         telegramApi.invokeApi('messages.getMessages', {id: ids}).then(function (res) {
+            callback(res);
+        });
+    }
+
+    getChannelMessages(channel, ids, callback) {
+        telegramApi.invokeApi('channels.getMessages', {channel: channel, id: ids}).then(function (res) {
             callback(res);
         });
     }
