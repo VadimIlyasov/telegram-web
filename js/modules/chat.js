@@ -171,15 +171,21 @@ export default class Chat {
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
 
+
+                console.log(message);
                 if (message.media && message.media._ === 'messageMediaPhoto') {
                     self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
                         if (res._ && res._ === 'upload.file') {
-                            console.log(res);
-                            $('.message[data-id="' + message.id + '"]').find('.message__text__content').append($('<img>', {
-                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
+                            $('.message[data-id="' + message.id + '"]').find('.message__text__content').prepend($('<img>', {
+                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
                             }))
                         }
                     });
+
+                    message.message = message.media.caption;
+                }
+
+                if (message.media && message.media._ === 'messageMediaDocument') {
                 }
 
                 $('.messages-list').prepend(messageTpl({
