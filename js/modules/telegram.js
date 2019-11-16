@@ -120,7 +120,7 @@ export default class TelegramAPI {
         });
     }
     
-    getFile(photo, callback) {
+    getFile(photo, callback, errorCallback) {
         let locationData = {
             _:'inputFileLocation',
             local_id: photo.local_id,
@@ -130,9 +130,7 @@ export default class TelegramAPI {
 
         telegramApi.invokeApi('upload.getFile', {
             location: locationData
-        }).then(function (res) {
-            callback(res);
-        });
+        }).then(callback, errorCallback);
     }
 
     getHistory(data, type, callback) {
