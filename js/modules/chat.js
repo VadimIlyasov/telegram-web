@@ -349,7 +349,7 @@ export default class Chat {
             }
         } else {
             title = this.chats[entityId].title;
-            $('.chat-window .info .status').data('user-id', '');
+            $('.chat-window .info .status').data('user-id', '').html('');
         }
 
         $('.chat-window .info .name').html(title);
@@ -381,6 +381,19 @@ export default class Chat {
 
             $('.chat-window .info .status').html(status).css('color', statusColor);
         }
+    }
+
+    setChatTopBarStatus(statusType, timestamp) {
+        let statusColor = 'black';
+
+        if (statusType === 'userStatusOnline') {
+            status = 'Online';
+            statusColor = '#3390ec';
+        } else if (statusType === 'userStatusOffline') {
+            status = 'last seen ' + this.getChatTopBarDate(timestamp);
+        }
+
+        $('.chat-window .info .status').html(status).css('color', statusColor);
     }
 
     getChatTopBarDate(timestamp) {
@@ -459,7 +472,6 @@ export default class Chat {
                             });
                         }
                     }
-                    
                     
                     break;
             }
