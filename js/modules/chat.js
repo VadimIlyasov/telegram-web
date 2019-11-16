@@ -331,7 +331,7 @@ export default class Chat {
                 if ($('.messages-list .message').length) {
                     // get ID of the oldest message
                     let max_id = $('.messages-list .message').first().data('id');
-                    self.loadDialogMessages(self.id, self.type, self.accessHash, 50, max_id);
+                    self.loadDialogMessages(self.id, self.type, self.accessHash, 50+$('.messages-list > div.message').length, max_id);
                 }
             }
         });
@@ -464,7 +464,6 @@ export default class Chat {
                         }
                         if (data.updates[i].message) {
                             // message from channel
-                            
                             self.telegram.getChannelMessages({channel_id: channelId, access_hash: data.chats[0].access_hash, _:'inputChannel'}, [data.updates[i].message.id], function(messages) {
                                 console.log(messages.messages[0]);
 
