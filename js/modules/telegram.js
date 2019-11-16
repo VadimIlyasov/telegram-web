@@ -137,7 +137,6 @@ export default class TelegramAPI {
 
     getHistory(data, type, callback) {
         let params = {};
-        let filters = {};
 
         switch (type) {
             case 'user':
@@ -156,7 +155,7 @@ export default class TelegramAPI {
                 break;
         }
 
-        filters = {peer: params};
+        let filters = {peer: params};
 
         if (data.max_id) {
             filters.max_id = data.max_id;
@@ -166,7 +165,6 @@ export default class TelegramAPI {
             filters.limit = data.limit;
         }
 
-        console.log(filters);
         telegramApi.invokeApi('messages.getHistory', filters).then(function (res) {
             console.log(res);
             callback(res);
