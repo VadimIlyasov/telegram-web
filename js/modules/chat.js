@@ -154,7 +154,6 @@ export default class Chat {
 
     loadDialogMessages(id, type, accessHash, num, max_id) {
         let messageTpl = _.template($('#message-tpl').html());
-        let messagesHTML = '';
         let self = this;
 
         // $('.messages-list').empty();
@@ -172,11 +171,16 @@ export default class Chat {
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
 
-                if (message.media) {
-                    console.log(message.media.photo.sizes[1].location);
-                    self.telegram.getFile(message.media.photo.sizes[1].location);
+                if (message.media && message.media._ === 'messageMediaPhoto') {
+                    self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
+                        if (res._ && res._ === 'upload.file') {
+                            console.log(res);
+                            $('.message[data-id="' + message.id + '"]').find('.message__text__content').append($('<img>', {
+                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
+                            }))
+                        }
+                    });
                 }
-
 
                 $('.messages-list').prepend(messageTpl({
                     id: message.id,
@@ -205,7 +209,7 @@ export default class Chat {
                 photo = self.photos[index];
 
                 if (photo) {
-                    self.telegram.getAvatar(photo, function (res) {
+                    self.telegram.getFile(photo, function (res) {
                         if (res) {
                             photo = 'data:image/jpeg;base64,' + toBase64(res.bytes);
                             self.photos[index] = photo;

@@ -120,7 +120,7 @@ export default class TelegramAPI {
         });
     }
     
-    getAvatar(photo, callback) {
+    getFile(photo, callback) {
         let locationData = {
             _:'inputFileLocation',
             local_id: photo.local_id,
@@ -227,16 +227,5 @@ export default class TelegramAPI {
 
     subscribe(callback) {
         telegramApi.subscribe('katanagram', callback);
-    }
-
-    getFile(file) {
-
-        let location = file;//{_: "fileLocation", dc_id: 2, volume_id: "264339258", local_id: 28877, secret: "3274502552574221147"};
-
-        telegramApi.invokeApi('upload.getFile', {location: location}).then(function (res) {
-            console.log('here');
-            console.log(res);
-            // callback(res);
-        });
     }
 }
