@@ -152,11 +152,16 @@ export default class TelegramAPI {
         let filters = {peer: params};
 
         if (data.max_id) {
-            filters.max_id = data.max_id;
+            // filters.max_id = data.max_id;
         }
 
         if (data.limit) {
             filters.limit = data.limit;
+        }
+
+        if (data.max_id) {
+            filters.offset_id = data.max_id;
+            filters.add_offset = 0;
         }
 
         telegramApi.invokeApi('messages.getHistory', filters).then(function (res) {
@@ -249,6 +254,36 @@ export default class TelegramAPI {
         };
 
         telegramApi.invokeApi('users.getFullUser', {id: userInfo}).then(function(data) {
+            callback(data);
+        });
+    }
+
+    getPhotos(data, type, callback) {
+        let params = {};
+
+        switch (type) {
+            case 'user':
+                params._ = 'inputPeerUser';
+                params.user_id = data.id;
+                params.access_hash = data.access_hash;
+                break;
+            case 'chat':
+                params._ = 'inputPeerChat';
+                params.chat_id = data.id;
+                break;
+            case 'channel':
+                params._ = 'inputPeerChannel';
+                params.channel_id = data.id;
+                params.access_hash = data.access_hash;
+                break;
+        }
+
+        let filters = {peer: params};
+
+        filters.limit = 10;//data.limit;
+        filters.filter = {_:'inputMessagesFilterPhotos'};
+console.log(filters);
+        telegramApi.invokeApi('messages.search', filters).then(function(data) {
             callback(data);
         });
     }
