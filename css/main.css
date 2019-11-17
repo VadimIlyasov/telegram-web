@@ -561,6 +561,11 @@ select {
   font-size: 12px;
 }
 
+.message.sticker {
+	background: none;
+	box-shadow: none;
+}
+
 .message.my-message {
   align-self: flex-end;
   background-color: #effdde;
@@ -649,6 +654,15 @@ select {
 }
 .message__image:hover .message__time {
   opacity: 1;
+}
+
+
+.sticker .message__time {
+	background: #404040;
+    padding: 2px 5px;
+    border-radius: 5px;
+    color: #fff;
+    opacity: 0.3;
 }
 
 
