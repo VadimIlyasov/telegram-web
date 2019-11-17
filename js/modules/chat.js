@@ -25,7 +25,7 @@ export default class Chat {
         $(document).on('click', '.contacts-list li', function () {
             $('.messages-list').empty();
 
-            console.log($(this));
+            // console.log($(this));
             self.accessHash = $(this).data('access-hash');
             self.type = $(this).data('type');
             self.id = $(this).data('id');
@@ -60,7 +60,7 @@ export default class Chat {
         };
 
         this.telegram.getDialogs(params,function (res) {
-            console.log(res);
+            // console.log(res);
             self.prepareDialogsList(res);
 
             let $contactsList = $('.contacts-list');
@@ -508,11 +508,18 @@ export default class Chat {
                             channelId = data.updates[i].channel_id;
                         }
                         if (data.updates[i].message) {
-                            // message from channel
-                            self.telegram.getChannelMessages({channel_id: channelId, access_hash: data.chats[0].access_hash, _:'inputChannel'}, [data.updates[i].message.id], function(messages) {
 
-                                self.addNewMessage('channel', channelId, messages.messages[0]);
-                            });
+                            if (data.updates[i]._ == 'updateNewMessage') {
+                                self.telegram.getMessages([data.updates[i].message.id], function (messages) {
+                                    self.addNewMessage('user', data.updates[i].message.from_id, messages.messages[0]);
+                                });
+                            } else {
+                                // message from channel
+                                self.telegram.getChannelMessages({channel_id: channelId, access_hash: data.chats[0].access_hash, _:'inputChannel'}, [data.updates[i].message.id], function(messages) {
+
+                                    self.addNewMessage('channel', channelId, messages.messages[0]);
+                                });
+                            }
                         }
                     }
                     
@@ -532,6 +539,43 @@ export default class Chat {
             let self = this;
 
             let date = new Date(message.date * 1000);
+
+
+
+            if (message.media && message.media._ === 'messageMediaPhoto') {
+                self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
+                    if (res._ && res._ === 'upload.file') {
+                        $('.message[data-id="' + message.id + '"]').removeClass('droplet').addClass(message.media.caption?'':'photo').find('.message__text__content').prepend($('<img>', {
+                            src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
+                        }));
+                    }
+                });
+
+                message.message = message.media.caption;
+            }
+
+            if (message.media && message.media._ === 'messageMediaDocument') {
+                if (message.media.document.thumb._ == 'photoSizeEmpty') {
+
+                    content = '<p>'+message.media.document.attributes[0].file_name+'</p>'
+                        +'<p>'+self.fileSizeFormat(message.media.document.size)+'</p>'
+                        +'<p><a href="#" class="dialog-document-download">Download</a></p>';
+
+                    // special case for "application/pdf"
+                } else {
+                    self.telegram.getFile(message.media.document.thumb.location, function (res) {
+                        if (res._ && res._ === 'upload.file') {
+                            $('.message[data-id="' + message.id + '"]').removeClass('droplet').addClass('sticker').find('.message__text__content').prepend($('<img>', {
+                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
+                            }))
+                        }
+                    });
+                }
+
+                message.message = message.media.caption;
+            }
+
+
 
 
             let variables = {
@@ -631,7 +675,7 @@ export default class Chat {
                 height = $(this).height();
             let bottomReached = scrollHeight - (scrollTop + height + 100) < 0;
 
-            console.log(scrollHeight - (scrollTop + height + 100), 'REACHED');
+            // console.log(scrollHeight - (scrollTop + height + 100), 'REACHED');
             if (bottomReached) {
                 if ($contactsList.find('li').length) {
                     let offsetId = $contactsList.find('li').last().data('id');
@@ -672,7 +716,7 @@ export default class Chat {
                 }
                 self.telegram.sendMessage(peer, $(this).val(), function(updates) {
                     $('.message-input-box input').val('');
-                    console.log(updates);
+                    // console.log(updates);
 
                     if (updates._ == 'updateShortSentMessage') {
                         self.telegram.getMessages([updates.id], function (messages) {
