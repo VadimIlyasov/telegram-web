@@ -50,6 +50,8 @@ export default class Chat {
             }
 
             self.loadDialogMessages(self.id, self.type, self.accessHash, 50);
+
+            $('.message-input-box input').focus();
         });
 
         $(window).blur(function () {
