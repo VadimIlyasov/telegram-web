@@ -92,12 +92,8 @@ export default class TelegramAPI {
         });
     }
 
-    getDialogs(callback) {
-        telegramApi.invokeApi('messages.getDialogs', {
-            offset_peer: {_: 'inputPeerEmpty'},
-            offset_date: 0,
-            limit: 20
-        }).then(function(dialogResult) {
+    getDialogs(params, callback) {
+        telegramApi.invokeApi('messages.getDialogs', params).then(function(dialogResult) {
             if (typeof callback === 'function') {
                 callback(dialogResult);
             }
@@ -222,6 +218,8 @@ export default class TelegramAPI {
             callback(res);
         });
     }
+
+
 
     subscribe(callback) {
         telegramApi.subscribe('katanagram', callback);
