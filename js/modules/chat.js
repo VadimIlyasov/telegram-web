@@ -165,6 +165,8 @@ export default class Chat {
         }, type, function (data) {
             var totalCount = data.count || data.messages.length;
 
+            let doScroll = ($('.messages-list div.message').length > 0)?false:true;
+
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
                 let content = '';
@@ -214,7 +216,9 @@ export default class Chat {
                 }));
             });
 
-            $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
+            if (doScroll) {
+                $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
+            }
         });
     }
 
@@ -658,6 +662,10 @@ export default class Chat {
             return false;
         });
     }
+
+    initInfoClick() {
+        // $('.user-info').
+    }
 }
 
 $(document).ready(function () {
@@ -671,6 +679,7 @@ $(document).ready(function () {
     chat.initNotifications();
     chat.initMessagesInput();
     chat.initSmiles();
+    chat.initInfoClick();
 
     // Update minutes and hours
     setInterval(chat.regularStatusUpdate, 60000, chat);

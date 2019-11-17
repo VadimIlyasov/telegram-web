@@ -372,6 +372,7 @@ select {
 	line-height: 54px;
 	color: #fff;
 	font-weight: bold;
+	display: block;
 }
 
 .contacts-list li > .avatar .online {
