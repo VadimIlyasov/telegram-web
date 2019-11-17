@@ -240,4 +240,16 @@ export default class TelegramAPI {
         let max = 500000000000;//Number.MAX_VALUE;
         return Math.floor(Math.random() * (max - min)) + min;
     }
+
+    getExternalUserInfo(user_id, access_hash, callback) {
+        let userInfo = {
+            user_id: user_id,
+            access_hash: access_hash,
+            _:'inputUser'
+        };
+
+        telegramApi.invokeApi('users.getFullUser', {id: userInfo}).then(function(data) {
+            callback(data);
+        });
+    }
 }

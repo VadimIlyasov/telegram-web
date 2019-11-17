@@ -171,6 +171,10 @@ export default class Chat {
             max_id: max_id,
             access_hash: $('.contacts-list li[data-id="' + id + '"]').data('access-hash')
         }, type, function (data) {
+            var totalCount = data.count || data.messages.length;
+
+            let doScroll = ($('.messages-list div.message').length > 0)?false:true;
+            
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
                 let content = '';
@@ -220,7 +224,9 @@ export default class Chat {
                 }));
             });
 
-            $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
+            if (doScroll) {
+                $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
+            }
         });
     }
 
@@ -684,6 +690,26 @@ export default class Chat {
             return false;
         });
     }
+
+    initInfoClick() {
+        let self = this;
+
+        $('.chat-window .top-bar .avatar-container').click(function() {
+
+            // Get user info
+            if (self.type == 'user') {
+                self.telegram.getExternalUserInfo(self.id, self.accessHash, function(data) {
+                    console.log(data);
+
+                    $('.user-info > .username').text(data.user.first_name + ' ' + data.user.last_name);
+                    $('.fields-phone').text(data.user.phone);
+                    $('.fields-username').text(data.user.username);
+                });
+            }
+
+            return false;
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -697,6 +723,7 @@ $(document).ready(function () {
     chat.initNotifications();
     chat.initMessagesInput();
     chat.initSmiles();
+    chat.initInfoClick();
     // chat.initContactsListScrollListener();
 
     // Update minutes and hours
