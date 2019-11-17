@@ -693,7 +693,23 @@ export default class Chat {
     }
 
     initInfoClick() {
-        // $('.user-info').
+        let self = this;
+
+        $('.chat-window .top-bar .avatar-container').click(function() {
+
+            // Get user info
+            if (self.type == 'user') {
+                self.telegram.getExternalUserInfo(self.id, self.accessHash, function(data) {
+                    console.log(data);
+
+                    $('.user-info > .username').text(data.user.first_name + ' ' + data.user.last_name);
+                    $('.fields-phone').text(data.user.phone);
+                    $('.fields-username').text(data.user.username);
+                });
+            }
+
+            return false;
+        });
     }
 }
 
