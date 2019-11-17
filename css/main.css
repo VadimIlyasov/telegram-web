@@ -566,6 +566,29 @@ select {
 	box-shadow: none;
 }
 
+.message.photo {
+	background: none;
+	box-shadow: none;
+	border-radius: 10px;
+	overflow: hidden;
+	padding: 0;
+}
+
+.message.photo .message__text {
+	padding: 0;
+	position: relative;
+}
+
+
+.message.photo .message__time {
+ 	position: absolute;
+    bottom: 5px;
+    right: 5px;
+    opacity: 0.7;
+}
+
+
+
 .message.my-message {
   align-self: flex-end;
   background-color: #effdde;
@@ -657,7 +680,7 @@ select {
 }
 
 
-.sticker .message__time {
+.sticker .message__time, .photo .message__time {
 	background: #404040;
     padding: 2px 5px;
     border-radius: 5px;

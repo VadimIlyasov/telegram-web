@@ -279,7 +279,7 @@ export default class Chat {
                 if (message.media && message.media._ === 'messageMediaPhoto') {
                     self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
                         if (res._ && res._ === 'upload.file') {
-                            $('.message[data-id="' + message.id + '"]').removeClass('droplet').addClass('photo').find('.message__text__content').prepend($('<img>', {
+                            $('.message[data-id="' + message.id + '"]').removeClass('droplet').addClass(message.media.caption?'':'photo').find('.message__text__content').prepend($('<img>', {
                                 src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
                             }));
                         }
