@@ -603,6 +603,8 @@ export default class Chat {
                     self.loadDialogs(offsetId);
                 }
             }
+
+            return false;
         });
     }
 
@@ -713,12 +715,19 @@ export default class Chat {
                 });
 
                 self.telegram.getPhotos({id: self.id, access_hash: self.accessHash}, 'user', function(data) {
-                    
+
                 });
             }
 
             return false;
         });
+    }
+
+    resizeHandling() {
+        $(window).resize(function() {
+            $('.chat-window .bottom-bar, .chat-window .top-bar').width($('.chat-window').width()-40);
+        });
+        $(window).resize();
     }
 }
 
@@ -734,6 +743,8 @@ $(document).ready(function () {
     chat.initMessagesInput();
     chat.initSmiles();
     chat.initInfoClick();
+    chat.initContactsListScrollListener();
+    chat.resizeHandling();
 
     // Update minutes and hours
     setInterval(chat.regularStatusUpdate, 60000, chat);

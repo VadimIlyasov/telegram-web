@@ -468,15 +468,28 @@ select {
 
 
 .chat-window .bottom-bar .message-input-box input {
-    line-height: 32px;
-    font-size: 16px;
+    line-height: 42px;
+    font-size: 12px;
     font-weight: normal;
-    padding: 5px 15px;
+    padding: 5px 15px 5px 50px;
     outline: none;
     border: 1px solid #dadce0;
     border-radius: 15px;
-    width: 500px;
+    width: 100%;
     position: relative;
+}
+
+.chat-window .bottom-bar .message-input-box {
+	max-width: 700px;
+	margin: auto;
+	position: relative;
+}
+
+.chat-window .bottom-bar .message-input-box .display-smiles {
+	position: absolute;
+	top: 17px;
+	left: 15px;
+	z-index: 1;
 }
 
 
@@ -545,12 +558,12 @@ select {
   z-index: 2;
   
   box-shadow: 0 2px 1px 0 rgba(160,172,182,.5);
+  font-size: 12px;
 }
 
 .message.my-message {
   align-self: flex-end;
   background-color: #effdde;
-  box-shadow: 0 2px 1px 0 rgba(93,196,82,.5);
 }
 
 .message.droplet:before {
@@ -574,13 +587,11 @@ select {
   clip-path: url(#left-droplet);
   background-color: inherit;
   z-index: 1;
-  box-shadow: 0 2px 1px 0 rgba(160,172,182,.5);
 }
 
 .message.my-message.droplet:before {
   right: -8px;
   left: initial;
-  box-shadow: 0px 1px 1px 1px rgba(93,196,82,.5);
 }
 .message.my-message.droplet:after {
   right: -10px;
@@ -617,7 +628,7 @@ select {
   padding-bottom: 4px;
   padding-left: 14px;
   text-align: right;
-  font-size: 12px;
+  font-size: 9px;
   color: #a0acb6;
 }
 .my-message .message__time {
