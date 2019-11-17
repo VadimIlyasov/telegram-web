@@ -22,3 +22,7 @@
 .background-char-g {
     background-color: #4ea4f6;
 }
+
+.hidden {
+    display: none;
+}
