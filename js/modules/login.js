@@ -57,7 +57,7 @@ $(document).ready(function () {
                                             A: 'A',
                                             M1: 'M1'
                                         }
-                                        telegram.checkPassword(, function(res) {
+                                        telegram.checkPassword('', function(res) {
                                             console.log(res);
                                             window.location.hash = '#chat';
                                         }, function (err) {
