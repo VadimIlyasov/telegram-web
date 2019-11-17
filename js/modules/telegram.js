@@ -151,10 +151,6 @@ export default class TelegramAPI {
 
         let filters = {peer: params};
 
-        if (data.max_id) {
-            // filters.max_id = data.max_id;
-        }
-
         if (data.limit) {
             filters.limit = data.limit;
         }

@@ -17,32 +17,63 @@ export default class Chat {
         this.type = '';
     }
 
-    loadDialogs(max_id, callback) {
+    loadTelegram() {
+        let self = this;
+
+        this.loadDialogs();
+
+        $(document).on('click', '.contacts-list li', function () {
+            $('.messages-list').empty();
+
+            console.log($(this));
+            self.accessHash = $(this).data('access-hash');
+            self.type = $(this).data('type');
+            self.id = $(this).data('id');
+
+            $('.contacts-list li').removeClass('selected');
+            $(this).addClass('selected');
+
+            switch (self.type) {
+                case 'user':
+                    self.telegram.getUserById(self.id, self.accessHash, function (info) {
+                        self.renderTopChatInfo(info, self.id);
+                    });
+
+                    break;
+                case 'channel':
+                case 'chat':
+                    self.renderTopChatInfo({}, self.id);
+
+                    break;
+            }
+
+            self.loadDialogMessages(self.id, self.type, self.accessHash, 50);
+        });
+    }
+
+    loadDialogs(callback) {
         let contactTpl = _.template($('#contact-tpl').html());
         let self = this;
         let params = {
             offset_peer: {_: 'inputPeerEmpty'},
-            limit: 20
+            limit: 50
         };
 
-        if (max_id) {
-            params.max_id = max_id;
-        }
-
         this.telegram.getDialogs(params,function (res) {
-            let list = self.prepareDialogsList(res);
+            console.log(res);
+            self.prepareDialogsList(res);
 
             let $contactsList = $('.contacts-list');
             let contactsHTML = '';
             let contactData = [];
 
-            $.each(list.dialogs, function (id, el) {
+            $.each(self.dialogs, function (id, el) {
                 // let date = new Date(list.messages[el.top_message].date * 1000);
-                let message = list.messages[el.top_message].message;
+                let message = self.messages[el.top_message].message;
 
                 if (el.peer.user_id) {
-                    if (typeof list['users'][el.id] !== 'undefined') {
-                        contactData = list['users'][el.id];
+                    if (typeof self.users[el.id] !== 'undefined') {
+                        contactData = self.users[el.id];
                         self.photos[el.id] = false;
 
                         if (contactData.photo && contactData.photo.photo_small !== undefined) {
@@ -50,9 +81,9 @@ export default class Chat {
                         }
 
                         contactsHTML += contactTpl({
-                            name: contactData.first_name + ( (contactData.last_name) ? (' '+contactData.last_name):''),
+                            name: contactData.first_name + ((contactData.last_name) ? (' ' + contactData.last_name) : ''),
                             lastMessage: message,
-                            time: self.getChatDate(list.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
+                            time: self.getChatDate(self.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
                             id: el.id,
                             type: contactData._,
@@ -60,8 +91,8 @@ export default class Chat {
                         });
                     }
                 } else {
-                    if (typeof list['chats'][el.id] !== 'undefined') {
-                        contactData = list['chats'][el.id];
+                    if (typeof self.chats[el.id] !== 'undefined') {
+                        contactData = self.chats[el.id];
                         self.photos[el.id] = false;
 
                         if (contactData.photo && contactData.photo.photo_small !== undefined) {
@@ -71,7 +102,7 @@ export default class Chat {
                         contactsHTML += contactTpl({
                             name: contactData.title,
                             lastMessage: message,
-                            time: self.getChatDate(list.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
+                            time: self.getChatDate(self.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
                             counter: el.unread_count,
                             id: el.id,
                             type: contactData._,
@@ -82,38 +113,6 @@ export default class Chat {
             });
 
             $contactsList.append(contactsHTML);
-
-            $('.contacts-list li').click(function () {
-                $('.messages-list').empty();
-
-                self.accessHash = $(this).data('access-hash');
-                self.type = $(this).data('type');
-                self.id = $(this).data('id');
-
-                $('.contacts-list li').removeClass('selected');
-                $(this).addClass('selected');
-
-                let id = $(this).data('id'),
-                    type = $(this).data('type'),
-                    accessHash = $(this).data('access-hash');
-
-                switch (type) {
-                    case 'user':
-                        self.telegram.getUserById(id, accessHash, function (info) {
-                           self.renderTopChatInfo(info, id);
-                        });
-
-                        break;
-                    case 'channel':
-                    case 'chat':
-                        self.renderTopChatInfo({}, id);
-
-                        break;
-                }
-
-                self.loadDialogMessages(id, type, accessHash, 50);
-            });
-
             self.loadAvatars();
         });
     }
@@ -151,12 +150,10 @@ export default class Chat {
             }
         });
 
-        this.users = list.users;
-        this.dialogs = list.dialogs;
-        this.chats = list.chats;
-        this.messages = list.messages;
-
-        return list;
+        this.users = $.extend(list.users, this.users);
+        this.dialogs = $.extend(list.dialogs, this.dialogs);
+        this.chats = $.extend(list.chats, this.chats);
+        this.messages = $.extend(list.messages, this.messages);
     }
 
     loadDialogMessages(id, type, accessHash, num, max_id) {
@@ -169,10 +166,8 @@ export default class Chat {
             id: id,
             limit: num,
             max_id: max_id,
-            access_hash: $('.contacts-list li[data-id="' + id + '"]').data('access-hash')
+            access_hash: accessHash
         }, type, function (data) {
-            var totalCount = data.count || data.messages.length;
-
             let doScroll = ($('.messages-list div.message').length > 0)?false:true;
             
             data.messages.forEach(function (message) {
@@ -234,8 +229,9 @@ export default class Chat {
         let photo = {};
         let self = this;
         let called = false;
+        let $dialogsList = $('.contacts-list li');
 
-        $('.contacts-list li').each(function () {
+        $dialogsList.each(function () {
             data.push($(this).data('id'));
         });
 
@@ -251,7 +247,7 @@ export default class Chat {
                             photo = 'data:image/jpeg;base64,' + toBase64(res.bytes);
                             self.photos[index] = photo;
 
-                            $('.contacts-list li[data-id="' + index + '"] .avatar-container').append($('<img>', {
+                            $('.contacts-list li[data-id="' + index + '"] .avatar-container').html($('<img>', {
                                 src: 'data:image/jpeg;base64,' + toBase64(res.bytes)
                             }));
 
@@ -571,7 +567,7 @@ export default class Chat {
     renderCharAvatar(name, $block) {
         let avatarChar = this.getAvatarCode(name);
 
-        $block.css('background-color', this.getAvatarColor(name)).append(avatarChar);
+        $block.css('background-color', this.getAvatarColor(name)).html(avatarChar);
     }
 
     fileSizeFormat(bytes) {
@@ -602,8 +598,9 @@ export default class Chat {
             console.log(scrollHeight - (scrollTop + height + 100), 'REACHED');
             if (bottomReached) {
                 if ($contactsList.find('li').length) {
+                    let offsetId = $contactsList.find('li').last().data('id');
                     // get ID of the oldest contact
-                    self.loadDialogs($contactsList.find('li').last().data('id'));
+                    self.loadDialogs(offsetId);
                 }
             }
         });
@@ -698,11 +695,21 @@ export default class Chat {
             // Get user info
             if (self.type == 'user') {
                 self.telegram.getExternalUserInfo(self.id, self.accessHash, function(data) {
-                    console.log(data);
+                    let userName = self.getUserName(data.user),
+                        $picture = $('.user-info > .picture');
 
-                    $('.user-info > .username').text(data.user.first_name + ' ' + data.user.last_name);
+                    if (self.photos[data.user.id]) {
+                        $picture.html($('<img>', {
+                            src: self.photos[data.user.id]
+                        }));
+                    } else {
+                        self.renderCharAvatar(userName, $picture);
+                    }
+
+                    $('.user-info > .username').text(userName);
                     $('.fields-phone').text(data.user.phone);
                     $('.fields-username').text(data.user.username);
+                    $('.aside.info').removeClass('hidden');
                 });
 
                 self.telegram.getPhotos({id: self.id, access_hash: self.accessHash}, 'user', function(data) {
@@ -720,14 +727,13 @@ $(document).ready(function () {
     let app = new App();
 
     chat.loadCurrentUserData(app);
-    chat.loadDialogs();
+    chat.loadTelegram();
     chat.initSearch();
     chat.initMessagesWindow();
     chat.initNotifications();
     chat.initMessagesInput();
     chat.initSmiles();
     chat.initInfoClick();
-    // chat.initContactsListScrollListener();
 
     // Update minutes and hours
     setInterval(chat.regularStatusUpdate, 60000, chat);
