@@ -712,6 +712,7 @@ export default class Chat {
                     $('.fields-phone').text(data.user.phone);
                     $('.fields-username').text(data.user.username);
                     $('.aside.info').removeClass('hidden');
+                    self.resizeHandling();
                 });
 
                 self.telegram.getPhotos({id: self.id, access_hash: self.accessHash}, 'user', function(data) {
