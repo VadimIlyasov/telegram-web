@@ -56,7 +56,7 @@ export default class Chat {
         let self = this;
         let params = {
             offset_peer: {_: 'inputPeerEmpty'},
-            limit: 50
+            limit: 20
         };
 
         this.telegram.getDialogs(params,function (res) {
@@ -160,7 +160,7 @@ export default class Chat {
         let messageTpl = _.template($('#message-tpl').html());
         let self = this;
 
-        num = (num || 50);
+        num = (num || 20);
 
         this.telegram.getHistory({
             id: id,
@@ -178,7 +178,7 @@ export default class Chat {
                 if (message.media && message.media._ === 'messageMediaPhoto') {
                     self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
                         if (res._ && res._ === 'upload.file') {
-                            $('.message[data-id="' + message.id + '"]').removeClass('droplet').addClass('photo').find('.message__text__content').prepend($('<img>', {
+                            $('.message[data-id="' + message.id + '"]').removeClass('droplet').addClass(message.media.caption?'':'photo').find('.message__text__content').prepend($('<img>', {
                                 src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
                             }));
                         }
@@ -208,14 +208,21 @@ export default class Chat {
                     message.message = message.media.caption;
                 }
 
-                $('.messages-list').prepend(messageTpl({
+                let variables = {
                     id: message.id,
                     message_type: (message.from_id === self.user.id) ? 'my-message' : '',
                     content: content,
+                    avatar: '',
                     message: message.message,
                     from: message.from_id,
                     time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
-                }));
+                };
+
+                if (type == 'channel') {
+                    variables.avatar = 1;
+                }
+
+                $('.messages-list').prepend(messageTpl(variables));
             });
 
             if (doScroll) {
@@ -382,7 +389,7 @@ export default class Chat {
                 if ($('.messages-list .message').length) {
                     // get ID of the oldest message
                     let max_id = $('.messages-list .message').first().data('id');
-                    self.loadDialogMessages(self.id, self.type, self.accessHash, 50+$('.messages-list > div.message').length, max_id);
+                    self.loadDialogMessages(self.id, self.type, self.accessHash, 10+$('.messages-list > div.message').length, max_id);
                 }
             }
         });
@@ -526,14 +533,22 @@ export default class Chat {
 
             let date = new Date(message.date * 1000);
 
-            $('.messages-list').append(messageTpl({
+
+            let variables = {
                 id: message.id,
                 message_type: (message.from_id === self.user.id) ? 'my-message' : '',
                 message: message.message,
                 content: '',
+                avatar: '',
                 from: message.from_id,
                 time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
-            }));
+            };
+
+            if (dialogType == 'chat') {
+                variables.avatar = '1';
+            }
+
+            $('.messages-list').append(messageTpl(variables));
 
             $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
 
@@ -732,7 +747,7 @@ export default class Chat {
                     $('.user-info > .username').text(userName);
                     $('.fields-phone').text(data.user.phone);
                     $('.fields-username').text(data.user.username);
-                    $('.aside.info').removeClass('hidden');
+                    $('.aside.info').show();
                     self.resizeHandling();
                 });
 
@@ -743,11 +758,19 @@ export default class Chat {
 
             return false;
         });
+
+        $('.close-info-link').click(function(){
+            $('.aside.info').hide();
+            $(window).resize();
+            return false;
+        });
     }
 
     resizeHandling() {
         $(window).resize(function() {
             $('.chat-window .bottom-bar, .chat-window .top-bar').width($('.chat-window').width()-40);
+
+            $('.contacts-top-bar').width($('.contacts-list').width() - 20);
         });
         $(window).resize();
     }
@@ -765,7 +788,7 @@ $(document).ready(function () {
     chat.initMessagesInput();
     chat.initSmiles();
     chat.initInfoClick();
-    chat.initContactsListScrollListener();
+    // chat.initContactsListScrollListener();
     chat.resizeHandling();
 
     // Update minutes and hours
