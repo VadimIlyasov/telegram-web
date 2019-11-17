@@ -10,6 +10,7 @@
     height: 54px;
     border-radius: 54px;
     overflow: hidden;
+    text-decoration: none;
 }
 
 .avatar-container img,

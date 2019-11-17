@@ -334,9 +334,9 @@ select {
 .wrapper > .aside { flex: 1 0 0; }
 
 .wrapper > .chat-window { flex: 2 0px; background: #e6ebee; height: 100%; overflow: auto; position: relative; padding: 100px 0; }
-.wrapper > .contacts { order: 1; background: #fff; border: 1px solid #dadce0; height: 100%; overflow: auto; position: relative; padding-top: 65px; border-top: 0;}
+.wrapper > .contacts { order: 1; background: #fff; border: 1px solid #dadce0; height: 100%; overflow: auto; position: relative; padding-top: 65px; border-top: 0; max-width: 400px;}
 .wrapper > .chat-window    { order: 2; }
-.wrapper > .info { order: 3; }
+.wrapper > .info { order: 3; border: 1px solid #dadce0; }
 
 
 /* Contacts list */
@@ -357,6 +357,7 @@ select {
 	display: flex;  
   	flex-flow: row wrap;
   	cursor: pointer;
+  	font-size: 12px;
 }
 
 .contacts-list li:hover, .contacts-list li.selected {
@@ -588,6 +589,17 @@ select {
 }
 
 
+.messages-list div.message:after {
+	clear:both;
+	content: '';
+	display: table;
+}
+
+
+.messages-list {
+	margin: auto;
+	max-width: 700px;
+}
 
 .message.my-message {
   align-self: flex-end;
@@ -708,7 +720,7 @@ select {
 
 .contacts-top-bar .search-bar-container {
 	float: right;
-	/*width: 350px;*/
+	width: 80%;
 }
 
 .search-bar-container input {
@@ -729,9 +741,31 @@ select {
 
 /* Info bar */
 
+.close-info-link {
+	float: left;
+
+	margin: 2px 20px;
+	margin-right: 30px;
+}
+
+
 .user-info .picture {
 	width: 120px;
+	height: 120px;
 	margin: auto;
+	overflow: hidden;
+	border-radius: 120px;
+	text-align: center;
+	color: #fff;
+}
+
+.user-info .picture img {
+	width: 100%;
+}
+
+.user-info span {
+    line-height: 120px;
+    font-size: 50px;
 }
 
 .user-info div.username {
@@ -785,6 +819,7 @@ select {
 
 .tabs-list li {
 	float: left;
+	width: 25%;
 }
 
 .tabs-list li a {

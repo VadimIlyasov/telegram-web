@@ -56,7 +56,7 @@ export default class Chat {
         let self = this;
         let params = {
             offset_peer: {_: 'inputPeerEmpty'},
-            limit: 50
+            limit: 20
         };
 
         this.telegram.getDialogs(params,function (res) {
@@ -160,7 +160,7 @@ export default class Chat {
         let messageTpl = _.template($('#message-tpl').html());
         let self = this;
 
-        num = (num || 50);
+        num = (num || 20);
 
         this.telegram.getHistory({
             id: id,
@@ -373,7 +373,7 @@ export default class Chat {
                 if ($('.messages-list .message').length) {
                     // get ID of the oldest message
                     let max_id = $('.messages-list .message').first().data('id');
-                    self.loadDialogMessages(self.id, self.type, self.accessHash, 50+$('.messages-list > div.message').length, max_id);
+                    self.loadDialogMessages(self.id, self.type, self.accessHash, 10+$('.messages-list > div.message').length, max_id);
                 }
             }
         });
@@ -711,7 +711,7 @@ export default class Chat {
                     $('.user-info > .username').text(userName);
                     $('.fields-phone').text(data.user.phone);
                     $('.fields-username').text(data.user.username);
-                    $('.aside.info').removeClass('hidden');
+                    $('.aside.info').show();
                     self.resizeHandling();
                 });
 
@@ -722,11 +722,19 @@ export default class Chat {
 
             return false;
         });
+
+        $('.close-info-link').click(function(){
+            $('.aside.info').hide();
+            $(window).resize();
+            return false;
+        });
     }
 
     resizeHandling() {
         $(window).resize(function() {
             $('.chat-window .bottom-bar, .chat-window .top-bar').width($('.chat-window').width()-40);
+
+            $('.contacts-top-bar').width($('.contacts-list').width() - 20);
         });
         $(window).resize();
     }
@@ -744,7 +752,7 @@ $(document).ready(function () {
     chat.initMessagesInput();
     chat.initSmiles();
     chat.initInfoClick();
-    chat.initContactsListScrollListener();
+    // chat.initContactsListScrollListener();
     chat.resizeHandling();
 
     // Update minutes and hours
