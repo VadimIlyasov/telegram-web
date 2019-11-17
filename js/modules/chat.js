@@ -171,8 +171,6 @@ export default class Chat {
             max_id: max_id,
             access_hash: $('.contacts-list li[data-id="' + id + '"]').data('access-hash')
         }, type, function (data) {
-            var totalCount = data.count || data.messages.length;
-
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
                 let content = '';
@@ -229,7 +227,6 @@ export default class Chat {
     loadAvatars() {
         let data = [];
         let photo = {};
-        let avatarChar = '';
         let self = this;
         let called = false;
 
