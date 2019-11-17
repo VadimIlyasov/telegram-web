@@ -844,3 +844,17 @@ select {
 .tabs-container .tab {
 	padding: 20px;
 }
+
+.message-avatar {
+	position: absolute;
+	left: -40px;
+	bottom: 0;
+	border-radius: 32px;
+	width: 32px;
+	height: 32px;
+	background: red;
+}
+
+.my-message .message-avatar {
+	right: -50px;
+}

@@ -153,6 +153,9 @@
 
 <script type="template" id="message-tpl">
     <div class="message <%= message_type %> droplet" data-id="<%= id %>">
+        <% if (avatar) { %>
+            <div class="message-avatar"></div>
+        <% } %>
         <div class="message__text">
             <div class="message__text__content">
                 <%= content %>

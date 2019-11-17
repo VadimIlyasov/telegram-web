@@ -208,14 +208,21 @@ export default class Chat {
                     message.message = message.media.caption;
                 }
 
-                $('.messages-list').prepend(messageTpl({
+                let variables = {
                     id: message.id,
                     message_type: (message.from_id === self.user.id) ? 'my-message' : '',
                     content: content,
+                    avatar: '',
                     message: message.message,
                     from: message.from_id,
                     time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
-                }));
+                };
+
+                if (type == 'channel') {
+                    variables.avatar = 1;
+                }
+
+                $('.messages-list').prepend(messageTpl(variables));
             });
 
             if (doScroll) {
@@ -518,14 +525,22 @@ export default class Chat {
 
             let date = new Date(message.date * 1000);
 
-            $('.messages-list').append(messageTpl({
+
+            let variables = {
                 id: message.id,
                 message_type: (message.from_id === self.user.id) ? 'my-message' : '',
                 message: message.message,
                 content: '',
+                avatar: '',
                 from: message.from_id,
                 time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
-            }));
+            };
+
+            if (dialogType == 'chat') {
+                variables.avatar = '1';
+            }
+
+            $('.messages-list').append(messageTpl(variables));
 
             $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
         }
