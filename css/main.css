@@ -113,6 +113,7 @@ input.text:focus {
 .md-input-group .md-input-label {
     -webkit-transition: all .15s cubic-bezier(.35,0,.15,1);
     transition: all .15s cubic-bezier(.35,0,.15,1);
+    position: relative;
 }
 
 .md-input-label {
@@ -857,4 +858,15 @@ select {
 
 .my-message .message-avatar {
 	right: -50px;
+}
+
+
+/* Other last miniute changes! ToDo: move accrdongily */
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+	outline: none;
+}
+
+span.select2-selection.select2-selection--single {
+	outline: none;
 }
