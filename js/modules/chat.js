@@ -232,20 +232,20 @@ export default class Chat {
                     from: message.from_id,
                     time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
                 };
-
-                if (type == 'channel') {
-                    if (self.chatUsers[message.from_id] && self.chatUsers[message.from_id].photo.photo_small) {
-                        self.telegram.getFile(self.chatUsers[message.from_id].photo.photo_small, function (res) {
-                            if (res._ && res._ === 'upload.file') {
-                                $('.message[data-id="' + message.id + '"] .message-avatar').html($('<img>', {
-                                    src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
-                                }));
-                            }
-                        });
-                    } else {
-                        self.renderCharAvatar( $('.message[data-id="' + message.id + '"] .message-avatar'), self.getUserName(self.chatUsers[message.from_id]));
-                    }
-                }
+                //
+                // if (type == 'channel' && message.from_id !== this.user.id) {
+                //     if (self.chatUsers[message.from_id] && self.chatUsers[message.from_id].photo.photo_small) {
+                //         self.telegram.getFile(self.chatUsers[message.from_id].photo.photo_small, function (res) {
+                //             if (res._ && res._ === 'upload.file') {
+                //                 $('.message[data-id="' + message.id + '"] .message-avatar').html($('<img>', {
+                //                     src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
+                //                 }));
+                //             }
+                //         });
+                //     } else {
+                //         self.renderCharAvatar( $('.message[data-id="' + message.id + '"] .message-avatar'), self.getUserName(self.chatUsers[message.from_id]));
+                //     }
+                // }
 
                 $('.messages-list').prepend(messageTpl(variables));
             });
@@ -601,9 +601,6 @@ export default class Chat {
                 message.message = message.media.caption;
             }
 
-
-
-
             let variables = {
                 id: message.id,
                 message_type: (message.from_id === self.user.id) ? 'my-message' : '',
@@ -614,21 +611,21 @@ export default class Chat {
                 time: date.getUTCHours().pad() + ':' + date.getMinutes().pad()
             };
 
-            if (dialogType == 'chat') {
-                variables.avatar = 1;
-                
-                if (self.chatUsers[message.from_id] && self.chatUsers[message.from_id].photo.photo_small) {
-                    self.telegram.getFile(self.chatUsers[message.from_id].photo.photo_small, function (res) {
-                        if (res._ && res._ === 'upload.file') {
-                            $('.message[data-id="' + message.id + '"] .message-avatar').html($('<img>', {
-                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
-                            }));
-                        }
-                    });
-                } else {
-                    self.renderCharAvatar( $('.message[data-id="' + message.id + '"] .message-avatar'), self.getUserName(self.chatUsers[message.from_id]));
-                }
-            }
+            // if (dialogType == 'chat' && message.from_id !== this.user.id) {
+            //     variables.avatar = 1;
+            //
+            //     if (self.chatUsers[message.from_id] && self.chatUsers[message.from_id].photo.photo_small) {
+            //         self.telegram.getFile(self.chatUsers[message.from_id].photo.photo_small, function (res) {
+            //             if (res._ && res._ === 'upload.file') {
+            //                 $('.message[data-id="' + message.id + '"] .message-avatar').html($('<img>', {
+            //                     src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
+            //                 }));
+            //             }
+            //         });
+            //     } else {
+            //         self.renderCharAvatar( $('.message[data-id="' + message.id + '"] .message-avatar'), self.getUserName(self.chatUsers[message.from_id]));
+            //     }
+            // }
 
             $('.messages-list').append(messageTpl(variables));
 
