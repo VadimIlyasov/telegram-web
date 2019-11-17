@@ -25,9 +25,105 @@ export default class Chat {
             limit: 20
         };
 
-        if (max_id) {
-            params.max_id = max_id;
-        }
+        this.telegram.getDialogs(params,function (res) {
+            let list = self.prepareDialogsList(res);
+
+            let $contactsList = $('.contacts-list');
+            let contactsHTML = '';
+            let contactData = [];
+
+            $.each(list.dialogs, function (id, el) {
+                // let date = new Date(list.messages[el.top_message].date * 1000);
+                let message = list.messages[el.top_message].message;
+
+                if (el.peer.user_id) {
+                    if (typeof list['users'][el.id] !== 'undefined') {
+                        contactData = list['users'][el.id];
+                        self.photos[el.id] = false;
+
+                        if (contactData.photo && contactData.photo.photo_small !== undefined) {
+                            self.photos[el.id] = contactData.photo.photo_small;
+                        }
+
+                        contactsHTML += contactTpl({
+                            name: contactData.first_name + ( (contactData.last_name) ? (' '+contactData.last_name):''),
+                            lastMessage: message,
+                            time: self.getChatDate(list.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
+                            counter: el.unread_count,
+                            id: el.id,
+                            type: contactData._,
+                            access_hash: contactData.access_hash
+                        });
+                    }
+                } else {
+                    if (typeof list['chats'][el.id] !== 'undefined') {
+                        contactData = list['chats'][el.id];
+                        self.photos[el.id] = false;
+
+                        if (contactData.photo && contactData.photo.photo_small !== undefined) {
+                            self.photos[el.id] = contactData.photo.photo_small;
+                        }
+
+                        contactsHTML += contactTpl({
+                            name: contactData.title,
+                            lastMessage: message,
+                            time: self.getChatDate(list.messages[el.top_message].date), //date.getUTCHours().pad() + ':' + date.getMinutes().pad(),
+                            counter: el.unread_count,
+                            id: el.id,
+                            type: contactData._,
+                            access_hash: contactData.access_hash
+                        });
+                    }
+                }
+            });
+
+            $contactsList.append(contactsHTML);
+
+            $('.contacts-list li').click(function () {
+                $('.messages-list').empty();
+
+                self.accessHash = $(this).data('access-hash');
+                self.type = $(this).data('type');
+                self.id = $(this).data('id');
+
+                $('.contacts-list li').removeClass('selected');
+                $(this).addClass('selected');
+
+                let id = $(this).data('id'),
+                    type = $(this).data('type'),
+                    accessHash = $(this).data('access-hash');
+
+                switch (type) {
+                    case 'user':
+                        self.telegram.getUserById(id, accessHash, function (info) {
+                           self.renderTopChatInfo(info, id);
+                        });
+
+                        break;
+                    case 'channel':
+                    case 'chat':
+                        self.renderTopChatInfo({}, id);
+
+                        break;
+                }
+
+                self.loadDialogMessages(id, type, accessHash, 50);
+            });
+
+            self.loadAvatars();
+        });
+    }
+
+
+    loadDialogs_(max_id) {
+        let contactTpl = _.template($('#contact-tpl').html());
+        let self = this;
+        let params = {
+            offset_peer: {_: 'inputPeerEmpty'},
+            limit: 20,
+            offset_id: max_id,
+            add_offset: 0
+        };
 
         this.telegram.getDialogs(params,function (res) {
             let list = self.prepareDialogsList(res);
@@ -604,9 +700,12 @@ export default class Chat {
             if (bottomReached) {
                 if ($contactsList.find('li').length) {
                     // get ID of the oldest contact
-                    self.loadDialogs($contactsList.find('li').last().data('id'));
+                    alert($contactsList.find('li').last().data('id'));
+                    self.loadDialogs_($contactsList.find('li').last().data('id'));
                 }
             }
+
+            return false;
         });
     }
 
@@ -707,12 +806,19 @@ export default class Chat {
                 });
 
                 self.telegram.getPhotos({id: self.id, access_hash: self.accessHash}, 'user', function(data) {
-                    
+
                 });
             }
 
             return false;
         });
+    }
+
+    resizeHandling() {
+        $(window).resize(function() {
+            $('.chat-window .bottom-bar, .chat-window .top-bar').width($('.chat-window').width()-40);
+        });
+        $(window).resize();
     }
 }
 
@@ -728,7 +834,8 @@ $(document).ready(function () {
     chat.initMessagesInput();
     chat.initSmiles();
     chat.initInfoClick();
-    // chat.initContactsListScrollListener();
+    chat.initContactsListScrollListener();
+    chat.resizeHandling();
 
     // Update minutes and hours
     setInterval(chat.regularStatusUpdate, 60000, chat);

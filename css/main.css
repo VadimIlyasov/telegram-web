@@ -471,12 +471,25 @@ select {
     line-height: 32px;
     font-size: 16px;
     font-weight: normal;
-    padding: 5px 15px;
+    padding: 5px 15px 5px 40px;
     outline: none;
     border: 1px solid #dadce0;
     border-radius: 15px;
-    width: 500px;
+    width: 100%;
     position: relative;
+}
+
+.chat-window .bottom-bar .message-input-box {
+	max-width: 700px;
+	margin: auto;
+	position: relative;
+}
+
+.chat-window .bottom-bar .message-input-box .display-smiles {
+	position: absolute;
+	top: 13px;
+	left: 13px;
+	z-index: 1;
 }
 
 
