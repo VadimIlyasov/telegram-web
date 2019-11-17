@@ -179,7 +179,6 @@ export default class Chat {
                 let date = new Date(message.date * 1000);
                 let content = '';
 
-
                 console.log(message);
                 if (message.media && message.media._ === 'messageMediaPhoto') {
                     self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
@@ -704,6 +703,10 @@ export default class Chat {
                     $('.user-info > .username').text(data.user.first_name + ' ' + data.user.last_name);
                     $('.fields-phone').text(data.user.phone);
                     $('.fields-username').text(data.user.username);
+                });
+
+                self.telegram.getPhotos({id: self.id, access_hash: self.accessHash}, 'user', function(data) {
+                    
                 });
             }
 
