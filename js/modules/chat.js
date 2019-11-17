@@ -15,17 +15,19 @@ export default class Chat {
         this.accessHash = '';
         this.id = 0;
         this.type = '';
+        this.chatUsers = [];
     }
 
     loadTelegram() {
         let self = this;
+
+        self.telegram.updateStatus(true);
 
         this.loadDialogs();
 
         $(document).on('click', '.contacts-list li', function () {
             $('.messages-list').empty();
 
-            console.log($(this));
             self.accessHash = $(this).data('access-hash');
             self.type = $(this).data('type');
             self.id = $(this).data('id');
@@ -49,6 +51,10 @@ export default class Chat {
 
             self.loadDialogMessages(self.id, self.type, self.accessHash, 50);
         });
+
+        $(window).blur(function () {
+            self.telegram.updateStatus(false);
+        });
     }
 
     loadDialogs(callback) {
@@ -60,7 +66,6 @@ export default class Chat {
         };
 
         this.telegram.getDialogs(params,function (res) {
-            console.log(res);
             self.prepareDialogsList(res);
 
             let $contactsList = $('.contacts-list');
@@ -156,6 +161,16 @@ export default class Chat {
         this.messages = $.extend(list.messages, this.messages);
     }
 
+    prepareChatUsersData(data) {
+        let self = this;
+
+        if (data._ === "messages.channelMessages" || data._ === "messages.messages") {
+            $.each(data.users, function (index, data) {
+                self.chatUsers[data.id] = data;
+            });
+        }
+    }
+
     loadDialogMessages(id, type, accessHash, num, max_id) {
         let messageTpl = _.template($('#message-tpl').html());
         let self = this;
@@ -169,12 +184,12 @@ export default class Chat {
             access_hash: accessHash
         }, type, function (data) {
             let doScroll = ($('.messages-list div.message').length > 0)?false:true;
+            self.prepareChatUsersData(data);
             
             data.messages.forEach(function (message) {
                 let date = new Date(message.date * 1000);
                 let content = '';
 
-                console.log(message);
                 if (message.media && message.media._ === 'messageMediaPhoto') {
                     self.telegram.getFile(message.media.photo.sizes[1].location, function (res) {
                         if (res._ && res._ === 'upload.file') {
@@ -219,7 +234,17 @@ export default class Chat {
                 };
 
                 if (type == 'channel') {
-                    variables.avatar = 1;
+                    if (self.chatUsers[message.from_id] && self.chatUsers[message.from_id].photo.photo_small) {
+                        self.telegram.getFile(self.chatUsers[message.from_id].photo.photo_small, function (res) {
+                            if (res._ && res._ === 'upload.file') {
+                                $('.message[data-id="' + message.id + '"] .message-avatar').html($('<img>', {
+                                    src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
+                                }));
+                            }
+                        });
+                    } else {
+                        self.renderCharAvatar( $('.message[data-id="' + message.id + '"] .message-avatar'), self.getUserName(self.chatUsers[message.from_id]));
+                    }
                 }
 
                 $('.messages-list').prepend(messageTpl(variables));
@@ -237,6 +262,7 @@ export default class Chat {
             };
 
             self.telegram.readHistory(peer, maxId);
+            self.removeCounter();
         });
     }
 
@@ -545,7 +571,19 @@ export default class Chat {
             };
 
             if (dialogType == 'chat') {
-                variables.avatar = '1';
+                variables.avatar = 1;
+                
+                if (self.chatUsers[message.from_id] && self.chatUsers[message.from_id].photo.photo_small) {
+                    self.telegram.getFile(self.chatUsers[message.from_id].photo.photo_small, function (res) {
+                        if (res._ && res._ === 'upload.file') {
+                            $('.message[data-id="' + message.id + '"] .message-avatar').html($('<img>', {
+                                src: 'data:image/jpeg;base64,' + toBase64(res.bytes), 'style': 'display:block'
+                            }));
+                        }
+                    });
+                } else {
+                    self.renderCharAvatar( $('.message[data-id="' + message.id + '"] .message-avatar'), self.getUserName(self.chatUsers[message.from_id]));
+                }
             }
 
             $('.messages-list').append(messageTpl(variables));
@@ -560,6 +598,7 @@ export default class Chat {
             };
 
             self.telegram.readHistory(peer, maxId);
+            self.removeCounter();
         }
 
         // Update last message in contacts list
@@ -577,7 +616,7 @@ export default class Chat {
     }
 
     removeCounter() {
-        // $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+'] .info')
+        $('.contacts-list li[data-id=' + this.id + '] .messages-counter').remove();
     }
 
     updateContactStatus(statusType, timestamp, userId) {
@@ -631,7 +670,6 @@ export default class Chat {
                 height = $(this).height();
             let bottomReached = scrollHeight - (scrollTop + height + 100) < 0;
 
-            console.log(scrollHeight - (scrollTop + height + 100), 'REACHED');
             if (bottomReached) {
                 if ($contactsList.find('li').length) {
                     let offsetId = $contactsList.find('li').last().data('id');
@@ -672,7 +710,6 @@ export default class Chat {
                 }
                 self.telegram.sendMessage(peer, $(this).val(), function(updates) {
                     $('.message-input-box input').val('');
-                    console.log(updates);
 
                     if (updates._ == 'updateShortSentMessage') {
                         self.telegram.getMessages([updates.id], function (messages) {
@@ -697,8 +734,6 @@ export default class Chat {
                             if (updates.updates[i].message) {
                                 // message from channel
                                 self.telegram.getChannelMessages({channel_id: channelId, access_hash: updates.chats[0].access_hash, _:'inputChannel'}, [updates.updates[i].message.id], function(messages) {
-                                    // console.log(messages.messages[0]);
-
                                     self.addNewMessage('channel', channelId, messages.messages[0]);
                                 });
                             }

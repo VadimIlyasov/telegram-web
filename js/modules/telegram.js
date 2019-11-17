@@ -127,7 +127,6 @@ export default class TelegramAPI {
         }
 
         telegramApi.invokeApi('messages.getHistory', filters).then(function (res) {
-            console.log(res);
             callback(res);
         });
     }
@@ -289,8 +288,13 @@ export default class TelegramAPI {
     readHistory(data, maxId) {
         let params = this.preparePeer(data.type, data);
 
-        telegramApi.invokeApi('messages.readHistory', {peer: params, max_id: maxId}, function (res) {
-            console.log(res);
-        });
+        telegramApi.invokeApi('messages.readHistory', {peer: params, max_id: maxId});
+
+        params._ = 'inputChannel';
+        telegramApi.invokeApi('channels.readHistory', {channel: params, max_id: maxId});
+    }
+
+    updateStatus(status) {
+        telegramApi.invokeApi('account.updateStatus', {offline: status, _: 'boolTrue'});
     }
 }

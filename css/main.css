@@ -564,7 +564,7 @@ select {
   font-size: 12px;
 }
 
-.message.sticker {
+.message.sticker, .message.my-message.sticker {
 	background: none;
 	box-shadow: none;
 }
