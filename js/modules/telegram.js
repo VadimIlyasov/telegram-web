@@ -29,19 +29,12 @@ export default class TelegramAPI {
     }
 
     sendCode(phoneNumber, callback) {
-        // let sentCode = {
-        //     is_password: false,
-        //     phone_code_hash: "5c4ea02f9f0ff0b0e5",
-        //     phone_registered: true,
-        //     send_call_timeout: 3600
-        // };
-
-        // callback(sentCode);
         telegramApi.sendCode(phoneNumber).then(function(sentCode) {
             window.phone_code_hash = sentCode.phone_code_hash;
         
             if (!sentCode.phone_registered) {
                 // New user
+                console.log('dddd');
             } else {
                 if (typeof callback === 'function') {
                     callback(sentCode);
@@ -54,16 +47,6 @@ export default class TelegramAPI {
         localStorage.setItem('code', code);
 
         let app = new App();
-        // let err = {
-        //     code: 400,
-        //     description: "CODE#400 PHONE_CODE_INVALID",
-        //     handled: true,
-        //     input: "auth.signIn",
-        //     type: "PHONE_CODE_INVALID"
-        // };
-
-        // app.setCookie('userHash', CryptoJS.SHA256(code).toString());
-        // callback();
         telegramApi.signIn(phoneNumber, window.phone_code_hash, code).then(function() {
             app.setCookie('userHash', CryptoJS.SHA256(code).toString());
             delete window.phone_code_hash;
@@ -130,6 +113,26 @@ export default class TelegramAPI {
     }
 
     getHistory(data, type, callback) {
+        let params = this.preparePeer(type, data);
+
+        let filters = {peer: params};
+
+        if (data.limit) {
+            filters.limit = data.limit;
+        }
+
+        if (data.max_id) {
+            filters.offset_id = data.max_id;
+            filters.add_offset = 0;
+        }
+
+        telegramApi.invokeApi('messages.getHistory', filters).then(function (res) {
+            console.log(res);
+            callback(res);
+        });
+    }
+
+    preparePeer(type, data) {
         let params = {};
 
         switch (type) {
@@ -149,21 +152,7 @@ export default class TelegramAPI {
                 break;
         }
 
-        let filters = {peer: params};
-
-        if (data.limit) {
-            filters.limit = data.limit;
-        }
-
-        if (data.max_id) {
-            filters.offset_id = data.max_id;
-            filters.add_offset = 0;
-        }
-
-        telegramApi.invokeApi('messages.getHistory', filters).then(function (res) {
-            console.log(res);
-            callback(res);
-        });
+        return params;
     }
 
     getMessages(ids, callback) {
@@ -276,11 +265,32 @@ export default class TelegramAPI {
 
         let filters = {peer: params};
 
-        filters.limit = 10;//data.limit;
+        filters.limit = 10;
         filters.filter = {_:'inputMessagesFilterPhotos'};
-console.log(filters);
+
         telegramApi.invokeApi('messages.search', filters).then(function(data) {
             callback(data);
+        });
+    }
+
+    checkPassword(password, callback, errorCallback) {
+        let app = new App();
+
+        telegramApi.invokeApi('auth.checkPassword', {password: password}, function (res) {
+            app.setCookie('userHash', CryptoJS.SHA256(localStorage.getItem('code')).toString());
+            delete window.phone_code_hash;
+
+            callback(res);
+        }, function (err) {
+            errorCallback(err);
+        });
+    }
+
+    readHistory(data, maxId) {
+        let params = this.preparePeer(data.type, data);
+
+        telegramApi.invokeApi('messages.readHistory', {peer: params, max_id: maxId}, function (res) {
+            console.log(res);
         });
     }
 }

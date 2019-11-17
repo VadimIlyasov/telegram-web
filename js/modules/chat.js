@@ -221,6 +221,15 @@ export default class Chat {
             if (doScroll) {
                 $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
             }
+
+            let maxId = $('.messages-list').find('.message').last().data('id');
+            let peer = {
+                id: self.id,
+                type: self.type,
+                access_hash: self.accessHash
+            };
+
+            self.telegram.readHistory(peer, maxId);
         });
     }
 
@@ -513,7 +522,6 @@ export default class Chat {
         // Append message to the dialog
         if ((self.type == dialogType) && (dialogID == self.id)) {
             let messageTpl = _.template($('#message-tpl').html());
-            let messagesHTML = '';
             let self = this;
 
             let date = new Date(message.date * 1000);
@@ -528,6 +536,15 @@ export default class Chat {
             }));
 
             $('.chat-window').animate({scrollTop: $('.chat-window')[0].scrollHeight}, 1000);
+
+            let maxId = $('.messages-list').find('.message').last().data('id');
+            let peer = {
+                id: self.id,
+                type: self.type,
+                access_hash: self.accessHash
+            };
+
+            self.telegram.readHistory(peer, maxId);
         }
 
         // Update last message in contacts list
@@ -542,6 +559,10 @@ export default class Chat {
         } else {
             counterEl.text(1+parseInt(counterEl.text()));
         }
+    }
+
+    removeCounter() {
+        // $('.contacts-list li[data-id='+dialogID+'][data-type='+dialogType+'] .info')
     }
 
     updateContactStatus(statusType, timestamp, userId) {

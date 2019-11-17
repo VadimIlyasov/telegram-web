@@ -27,7 +27,7 @@ $(document).ready(function () {
         $(document).on('submit', '.login-form', function () {
             let phoneNumber = $('.login-page .phone').val();
 
-            telegram.sendCode(phoneNumber, function(sentCode) {
+            telegram.sendCode(phoneNumber, function() {
                 //render send code page
                 body.load('./html/components/auth-code.html', function () {
                     $('.phone').text(phoneNumber);
@@ -37,7 +37,10 @@ $(document).ready(function () {
 
                     $(document).on('submit', '.auth-code-form', function() {
                         telegram.signIn(phoneNumber, $('#auth-code').val(), function(res) {
-                            if (false) {
+                            console.log(res);
+                            window.location.hash = '#chat';
+                        }, function (err) {
+                            if (err.type === 'SESSION_PASSWORD_NEEDED') {
                                 body.load('./html/components/auth-password.html', function () {
                                     $('input[type="text"]')
                                         .blurDecoration()
@@ -47,18 +50,31 @@ $(document).ready(function () {
                                         passwordToggling();
                                     });
 
-                                    $(document).on('change', '#auth-password', function() {
-                                        // telegram.pa
+                                    $(document).on('submit', '.auth-password-form', function() {
+                                        let password = {
+                                            _: 'InputCheckPasswordSRP',
+                                            srp_id: $('#auth-password').val(),
+                                            A: 'A',
+                                            M1: 'M1'
+                                        }
+                                        telegram.checkPassword(, function(res) {
+                                            console.log(res);
+                                            window.location.hash = '#chat';
+                                        }, function (err) {
+                                            $('#auth-password').invalid();
+                                            $('.auth-password-form').concerned();
+                                        });
+
+                                        return false;
                                     });
                                 });
                             } else {
-                                window.location.hash = '#chat';
+                                $('#auth-code').invalid();
+                                $('.auth-code-form').concerned();
                             }
-                        }, function (err) {
-                            console.log(err);
-                            $('#auth-code').invalid();
-                            $('.auth-code-form').concerned();
                         });
+
+                        return false;
                     });
                 });
             });
